@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BaseProject.Domain.Entities
+namespace BaseProject.Application.Models.Requests
 {
-    public class LovedBook
+    public class LovedBookRequest
     {
-        public long BookId { get; set; }
-        public Book? Book { get; set; }
         public string UserId { get; set; } = string.Empty;
-        public User? User { get; set; }
+        public long BookId { get; set; }
     }
 }

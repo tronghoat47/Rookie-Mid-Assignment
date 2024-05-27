@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace BaseProject.Infrastructure.Repositories
 {
-    public class BookRepository : GenericRepository<Book>, IBookRepository
+    public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {
-        public BookRepository(BaseProjectContext context) : base(context)
-        { }
+        public CategoryRepository(BaseProjectContext context) : base(context)
+        {
+        }
     }
 }

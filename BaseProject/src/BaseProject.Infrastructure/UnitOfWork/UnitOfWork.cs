@@ -10,6 +10,11 @@ namespace BaseProject.Infrastructure.UnitOfWork
         private IUserRepository _userRepository;
         private IRefreshTokenRepository _refreshTokenRepository;
         private IBookRepository _bookRepository;
+        private ICategoryRepository _categoryRepository;
+        private IDiscountRepository _discountRepository;
+        private IOrderRepository _orderRepository;
+        private IOrderDetailRepository _orderDetailRepository;
+        private ILovedBookRepository _lovedBookRepository;
 
         public UnitOfWork(BaseProjectContext context)
         {
@@ -24,6 +29,21 @@ namespace BaseProject.Infrastructure.UnitOfWork
 
         public IBookRepository BookRepository
             => _bookRepository ??= new BookRepository(_context);
+
+        public ICategoryRepository CategoryRepository
+            => _categoryRepository ??= new CategoryRepository(_context);
+
+        public IOrderRepository OrderRepository
+            => _orderRepository ??= new OrderRepository(_context);
+
+        public IOrderDetailRepository OrderDetailRepository
+            => _orderDetailRepository ??= new OrderDetailRepository(_context);
+
+        public ILovedBookRepository LovedBookRepository
+            => _lovedBookRepository ??= new LovedBookRepository(_context);
+
+        public IDiscountRepository DiscountRepository
+            => _discountRepository ??= new DiscountRepository(_context);
 
         public async Task<int> CommitAsync()
         {

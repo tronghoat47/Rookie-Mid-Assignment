@@ -17,6 +17,9 @@ namespace BaseProject.Application
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBookService, BookService>();
+            services.AddScoped<ILovedBookService, LovedBookService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IDiscountService, DiscountService>();
         }
     }
 }

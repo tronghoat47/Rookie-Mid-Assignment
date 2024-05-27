@@ -72,19 +72,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 (builder.Configuration["Jwt:Key"]))
         };
 
-        opt.Events = new JwtBearerEvents
-        {
-            OnChallenge = context =>
-            {
-                // Override the default behavior to handle the CORS preflight request
-                if (context.Response.StatusCode == 401)
-                {
-                    context.HandleResponse();
-                    context.Response.Headers.Add("Access-Control-Allow-Origin", "*"); // Replace "*" with the specific origin
-                }
-                return Task.CompletedTask;
-            }
-        };
+        //opt.Events = new JwtBearerEvents
+        //{
+        //    OnChallenge = context =>
+        //    {
+        //        // Override the default behavior to handle the CORS preflight request
+        //        if (context.Response.StatusCode == 401)
+        //        {
+        //            context.HandleResponse();
+        //            context.Response.Headers.Add("Access-Control-Allow-Origin", "*"); // Replace "*" with the specific origin
+        //        }
+        //        return Task.CompletedTask;
+        //    }
+        //};
     });
 
 builder.Services.AddCors(options =>

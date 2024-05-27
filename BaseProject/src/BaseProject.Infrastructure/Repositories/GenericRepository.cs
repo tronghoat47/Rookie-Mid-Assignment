@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace BaseProject.Infrastructure.Repositories
 {
-    internal class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         private readonly BaseProjectContext _context;
 
