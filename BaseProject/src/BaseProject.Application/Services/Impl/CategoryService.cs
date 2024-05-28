@@ -1,4 +1,6 @@
-﻿using BaseProject.Application.Models.Requests;
+﻿using AutoMapper;
+using BaseProject.Application.Models.Requests;
+using BaseProject.Application.Models.Responses;
 using BaseProject.Domain.Entities;
 using BaseProject.Domain.Interfaces;
 using Microsoft.Data.SqlClient;
@@ -13,10 +15,12 @@ namespace BaseProject.Application.Services.Impl
     public class CategoryService : ICategoryService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public CategoryService(IUnitOfWork unitOfWork)
+        public CategoryService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<bool> CreateCategory(CategoryRequest categoryRequest)
@@ -54,14 +58,30 @@ namespace BaseProject.Application.Services.Impl
             }
         }
 
-        public async Task<IEnumerable<Category>> GetCategories()
+        public async Task<IEnumerable<CategoryResponse>> GetCategories()
         {
-            return await _unitOfWork.CategoryRepository.GetAllAsync();
+            try
+            {
+                var categories = await _unitOfWork.CategoryRepository.GetAllAsync();
+                return _mapper.Map<IEnumerable<CategoryResponse>>(categories);
+            }
+            catch (SqlException)
+            {
+                return null;
+            }
         }
 
-        public async Task<Category> GetCategoryById(long id)
+        public async Task<CategoryResponse> GetCategoryById(long id)
         {
-            return await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == id);
+            try
+            {
+                var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == id);
+                return _mapper.Map<CategoryResponse>(category);
+            }
+            catch (SqlException)
+            {
+                return null;
+            }
         }
     }
 }
