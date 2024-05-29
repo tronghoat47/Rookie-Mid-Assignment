@@ -1,66 +1,37 @@
-﻿using Azure;
-using BaseProject.Application.Models.Requests;
+﻿using BaseProject.Application.Models.Requests;
+using BaseProject.Application.Models.Responses;
 using BaseProject.Application.Services;
-using BaseProject.Domain.Entities;
 using BaseProject.Domain.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
 
 namespace BaseProject.WebAPI.Controllers
 {
-    [Route("api/books")]
+    [Route("api/order-details")]
     [ApiController]
-    public class BookController : BaseApiController
+    public class OrderDetailController : Controller
     {
-        private readonly IBookService _bookService;
+        private readonly IOrderDetailService _orderDetailService;
 
-        public BookController(IBookService bookService)
+        public OrderDetailController(IOrderDetailService orderDetailService)
         {
-            _bookService = bookService;
+            _orderDetailService = orderDetailService;
         }
 
         [HttpGet]
-        [EnableQuery]
-        public async Task<IActionResult> GetBooks()
+        public async Task<IActionResult> GetOrderDetails()
         {
             var response = new GeneralResponse();
             try
             {
-                var books = await _bookService.GetBooks();
-                if (books == null || !books.Any())
+                var orderDetails = await _orderDetailService.GetOrderDetails();
+                if (orderDetails == null || !orderDetails.Any())
                 {
                     response.Success = false;
-                    response.Message = "No books found";
+                    response.Message = "No order details found";
                     return NotFound(response);
                 }
-                response.Message = "Get books successfully";
-                response.Data = books;
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = ex.Message;
-                return BadRequest(response);
-            }
-        }
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetBook(int id)
-        {
-            var response = new GeneralResponse();
-            try
-            {
-                var book = await _bookService.GetBook(id);
-                if (book == null)
-                {
-                    response.Success = false;
-                    response.Message = "Book not found";
-                    return NotFound(response);
-                }
-                response.Message = "Get book successfully";
-                response.Data = book;
+                response.Message = "Get order details successfully";
+                response.Data = orderDetails;
                 return Ok(response);
             }
             catch (Exception ex)
@@ -72,19 +43,19 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBook([FromForm] BookRequest book)
+        public async Task<IActionResult> CreateOrderDetail([FromBody] OrderDetailRequest request)
         {
             var response = new GeneralResponse();
             try
             {
-                var result = await _bookService.CreateBook(book);
+                var result = await _orderDetailService.CreateAsync(request);
                 if (!result)
                 {
                     response.Success = false;
-                    response.Message = "Create fail";
+                    response.Message = "Create order detail failed";
                     return BadRequest(response);
                 }
-                response.Message = "Create book successfully";
+                response.Message = "Create order detail successfully";
                 return Ok(response);
             }
             catch (Exception ex)
@@ -95,21 +66,20 @@ namespace BaseProject.WebAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook(int id, [FromForm] BookRequest book)
+        [HttpPut("{orderId}/{bookId}")]
+        public async Task<IActionResult> UpdateOrderDetail(long orderId, long bookId, [FromBody] OrderDetailRequest request)
         {
             var response = new GeneralResponse();
             try
             {
-                var result = await _bookService.UpdateBook(id, book);
+                var result = await _orderDetailService.UpdateAsync(orderId, bookId, request);
                 if (!result)
                 {
                     response.Success = false;
-                    response.Message = "Update fail";
+                    response.Message = "Update order detail failed";
                     return BadRequest(response);
                 }
-                response.Message = "Update book successfully";
-                response.Data = id;
+                response.Message = "Update order detail successfully";
                 return Ok(response);
             }
             catch (Exception ex)
@@ -120,22 +90,45 @@ namespace BaseProject.WebAPI.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteBook(int id)
+        [HttpDelete("{orderId}/{bookId}")]
+        public async Task<IActionResult> DeleteOrderDetail(long orderId, long bookId)
         {
             var response = new GeneralResponse();
             try
             {
-                var result = await _bookService.DeleteBook(id);
+                var result = await _orderDetailService.DeleteAsync(orderId, bookId);
                 if (!result)
                 {
                     response.Success = false;
-                    response.Message = "Delete fail";
+                    response.Message = "Delete order detail failed";
                     return BadRequest(response);
                 }
-                response.Message = "Delete book successfully";
-                response.Data = id;
+                response.Message = "Delete order detail successfully";
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                return BadRequest(response);
+            }
+        }
+
+        [HttpGet("{orderId}/{bookId}")]
+        public async Task<IActionResult> GetOrderDetail(long orderId, long bookId)
+        {
+            var response = new GeneralResponse();
+            try
+            {
+                var orderDetail = await _orderDetailService.GetOrderDetail(orderId, bookId);
+                if (orderDetail == null)
+                {
+                    response.Success = false;
+                    response.Message = "No order detail found";
+                    return NotFound(response);
+                }
+                response.Message = "Get order detail successfully";
+                response.Data = orderDetail;
                 return Ok(response);
             }
             catch (Exception ex)

@@ -2,11 +2,9 @@ using BaseProject.Application;
 using BaseProject.Infrastructure;
 using BaseProject.Infrastructure.DataAccess;
 using BaseProject.Infrastructure.Services.Core;
-using BaseProject.WebAPI;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.OData;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
@@ -71,20 +69,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes
                 (builder.Configuration["Jwt:Key"]))
         };
-
-        //opt.Events = new JwtBearerEvents
-        //{
-        //    OnChallenge = context =>
-        //    {
-        //        // Override the default behavior to handle the CORS preflight request
-        //        if (context.Response.StatusCode == 401)
-        //        {
-        //            context.HandleResponse();
-        //            context.Response.Headers.Add("Access-Control-Allow-Origin", "*"); // Replace "*" with the specific origin
-        //        }
-        //        return Task.CompletedTask;
-        //    }
-        //};
     });
 
 builder.Services.AddCors(options =>

@@ -1,41 +1,36 @@
-﻿using Azure;
-using BaseProject.Application.Models.Requests;
+﻿using BaseProject.Application.Models.Requests;
 using BaseProject.Application.Services;
-using BaseProject.Domain.Entities;
 using BaseProject.Domain.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
 
 namespace BaseProject.WebAPI.Controllers
 {
-    [Route("api/books")]
+    [Route("api/loved-books")]
     [ApiController]
-    public class BookController : BaseApiController
+    public class LovedBookController : Controller
     {
-        private readonly IBookService _bookService;
+        private readonly ILovedBookService _lovedBookService;
 
-        public BookController(IBookService bookService)
+        public LovedBookController(ILovedBookService lovedBookService)
         {
-            _bookService = bookService;
+            _lovedBookService = lovedBookService;
         }
 
         [HttpGet]
-        [EnableQuery]
-        public async Task<IActionResult> GetBooks()
+        public async Task<IActionResult> GetLovedBooks()
         {
             var response = new GeneralResponse();
             try
             {
-                var books = await _bookService.GetBooks();
-                if (books == null || !books.Any())
+                var lovedBooks = await _lovedBookService.GetLovedBooks();
+                if (lovedBooks == null || !lovedBooks.Any())
                 {
                     response.Success = false;
-                    response.Message = "No books found";
+                    response.Message = "No loved books found";
                     return NotFound(response);
                 }
-                response.Message = "Get books successfully";
-                response.Data = books;
+                response.Message = "Get loved books successfully";
+                response.Data = lovedBooks;
                 return Ok(response);
             }
             catch (Exception ex)
@@ -46,21 +41,46 @@ namespace BaseProject.WebAPI.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetBook(int id)
+        [HttpGet("book/{bookId}")]
+        public async Task<IActionResult> GetLovedBooksByBook(long bookId)
         {
             var response = new GeneralResponse();
             try
             {
-                var book = await _bookService.GetBook(id);
-                if (book == null)
+                var lovedBook = await _lovedBookService.GetLovedBooksByBook(bookId);
+                if (lovedBook == null)
                 {
                     response.Success = false;
-                    response.Message = "Book not found";
+                    response.Message = "Loved book not found";
                     return NotFound(response);
                 }
-                response.Message = "Get book successfully";
-                response.Data = book;
+                response.Message = "Get loved book successfully";
+                response.Data = lovedBook;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                return BadRequest(response);
+            }
+        }
+
+        [HttpGet("user/{userId}")]
+        public async Task<IActionResult> GetLovedBooksByUser(string userId)
+        {
+            var response = new GeneralResponse();
+            try
+            {
+                var lovedBook = await _lovedBookService.GetLovedBooksByUser(userId);
+                if (lovedBook == null)
+                {
+                    response.Success = false;
+                    response.Message = "Loved book not found";
+                    return NotFound(response);
+                }
+                response.Message = "Get loved book successfully";
+                response.Data = lovedBook;
                 return Ok(response);
             }
             catch (Exception ex)
@@ -72,19 +92,19 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBook([FromForm] BookRequest book)
+        public async Task<IActionResult> CreateLovedBook([FromBody] LovedBookRequest lovedBookRequest)
         {
             var response = new GeneralResponse();
             try
             {
-                var result = await _bookService.CreateBook(book);
+                var result = await _lovedBookService.CreateLovedBook(lovedBookRequest);
                 if (!result)
                 {
                     response.Success = false;
-                    response.Message = "Create fail";
+                    response.Message = "Create loved book failed";
                     return BadRequest(response);
                 }
-                response.Message = "Create book successfully";
+                response.Message = "Create loved book successfully";
                 return Ok(response);
             }
             catch (Exception ex)
@@ -95,47 +115,20 @@ namespace BaseProject.WebAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook(int id, [FromForm] BookRequest book)
+        [HttpDelete("{userId}/{bookId}")]
+        public async Task<IActionResult> DeleteLovedBook(string userId, long bookId)
         {
             var response = new GeneralResponse();
             try
             {
-                var result = await _bookService.UpdateBook(id, book);
+                var result = await _lovedBookService.DeleteLovedBook(userId, bookId);
                 if (!result)
                 {
                     response.Success = false;
-                    response.Message = "Update fail";
+                    response.Message = "Delete loved book failed";
                     return BadRequest(response);
                 }
-                response.Message = "Update book successfully";
-                response.Data = id;
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = ex.Message;
-                return BadRequest(response);
-            }
-        }
-
-        [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteBook(int id)
-        {
-            var response = new GeneralResponse();
-            try
-            {
-                var result = await _bookService.DeleteBook(id);
-                if (!result)
-                {
-                    response.Success = false;
-                    response.Message = "Delete fail";
-                    return BadRequest(response);
-                }
-                response.Message = "Delete book successfully";
-                response.Data = id;
+                response.Message = "Delete loved book successfully";
                 return Ok(response);
             }
             catch (Exception ex)

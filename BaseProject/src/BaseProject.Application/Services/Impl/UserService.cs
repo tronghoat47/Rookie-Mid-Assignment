@@ -21,6 +21,11 @@ namespace BaseProject.Application.Services.Impl
             return await _unitOfWork.UserRepository.GetAsync(u => u.Email == email, u => u.Role);
         }
 
+        public async Task<User> GetUserByIdAsync(string userId)
+        {
+            return await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId, u => u.Role);
+        }
+
         public async Task<int> ActiveAccount(string email)
         {
             var user = await _unitOfWork.UserRepository.GetAsync(u => u.Email == email);
@@ -33,9 +38,9 @@ namespace BaseProject.Application.Services.Impl
             return await _unitOfWork.CommitAsync();
         }
 
-        public async Task<int> InActiveAccount(string email)
+        public async Task<int> InActiveAccount(string userId)
         {
-            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Email == email);
+            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
@@ -45,9 +50,9 @@ namespace BaseProject.Application.Services.Impl
             return await _unitOfWork.CommitAsync();
         }
 
-        public async Task<int> UpdateUserAsync(UserRequest user)
+        public async Task<int> UpdateUserAsync(string userId, UserRequest user)
         {
-            var userEntity = await _unitOfWork.UserRepository.GetAsync(u => u.Email == user.Email);
+            var userEntity = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId);
             if (userEntity == null)
             {
                 throw new KeyNotFoundException("User not found");
@@ -61,9 +66,9 @@ namespace BaseProject.Application.Services.Impl
             return await _unitOfWork.CommitAsync();
         }
 
-        public async Task<int> AddMoney(string email, decimal amount)
+        public async Task<int> AddMoney(string userId, decimal amount)
         {
-            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Email == email);
+            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");

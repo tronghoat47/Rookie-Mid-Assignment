@@ -1,7 +1,6 @@
 ﻿using BaseProject.Application.Models.Requests;
 using BaseProject.Application.Services;
 using BaseProject.Domain.Constants;
-using BaseProject.Domain.Entities;
 using BaseProject.Domain.Models;
 using BaseProject.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -25,11 +24,11 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterRequest request)
+        public async Task<IActionResult> RegisterAsync([FromBody] UserRequest request)
         {
             try
             {
-                var result = await _authService.RegisterAsync(request.Email, request.Password, request.RoleId);
+                var result = await _authService.RegisterAsync(request);
                 var response = new GeneralResponse
                 {
                     Message = "User registered successfully",
@@ -199,17 +198,6 @@ namespace BaseProject.WebAPI.Controllers
                 };
                 return BadRequest(response);
             }
-        }
-
-        [HttpGet("test-auth")]
-        [Authorize]
-        public IActionResult TestAuth()
-        {
-            var response = new GeneralResponse
-            {
-                Message = "Test auth successfully"
-            };
-            return Ok(response);
         }
     }
 }

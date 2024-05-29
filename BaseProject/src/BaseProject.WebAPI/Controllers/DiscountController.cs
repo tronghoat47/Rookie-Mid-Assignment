@@ -1,41 +1,36 @@
-﻿using Azure;
-using BaseProject.Application.Models.Requests;
+﻿using BaseProject.Application.Models.Requests;
 using BaseProject.Application.Services;
-using BaseProject.Domain.Entities;
 using BaseProject.Domain.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
 
 namespace BaseProject.WebAPI.Controllers
 {
-    [Route("api/books")]
+    [Route("api/discounts")]
     [ApiController]
-    public class BookController : BaseApiController
+    public class DiscountController : Controller
     {
-        private readonly IBookService _bookService;
+        private readonly IDiscountService _discountService;
 
-        public BookController(IBookService bookService)
+        public DiscountController(IDiscountService discountService)
         {
-            _bookService = bookService;
+            _discountService = discountService;
         }
 
         [HttpGet]
-        [EnableQuery]
-        public async Task<IActionResult> GetBooks()
+        public async Task<IActionResult> GetDiscounts()
         {
             var response = new GeneralResponse();
             try
             {
-                var books = await _bookService.GetBooks();
-                if (books == null || !books.Any())
+                var discounts = await _discountService.GetDiscountsAsync();
+                if (discounts == null || !discounts.Any())
                 {
                     response.Success = false;
-                    response.Message = "No books found";
+                    response.Message = "No discounts found";
                     return NotFound(response);
                 }
-                response.Message = "Get books successfully";
-                response.Data = books;
+                response.Message = "Get discounts successfully";
+                response.Data = discounts;
                 return Ok(response);
             }
             catch (Exception ex)
@@ -47,20 +42,20 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBook(int id)
+        public async Task<IActionResult> GetDiscount(int id)
         {
             var response = new GeneralResponse();
             try
             {
-                var book = await _bookService.GetBook(id);
-                if (book == null)
+                var discount = await _discountService.GetDiscountByIdAsync(id);
+                if (discount == null)
                 {
                     response.Success = false;
-                    response.Message = "Book not found";
+                    response.Message = "Discount not found";
                     return NotFound(response);
                 }
-                response.Message = "Get book successfully";
-                response.Data = book;
+                response.Message = "Get discount successfully";
+                response.Data = discount;
                 return Ok(response);
             }
             catch (Exception ex)
@@ -72,19 +67,19 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBook([FromForm] BookRequest book)
+        public async Task<IActionResult> CreateDiscount([FromBody] DiscountRequest discount)
         {
             var response = new GeneralResponse();
             try
             {
-                var result = await _bookService.CreateBook(book);
+                var result = await _discountService.CreateDiscountAsync(discount);
                 if (!result)
                 {
                     response.Success = false;
-                    response.Message = "Create fail";
+                    response.Message = "Create discount failed";
                     return BadRequest(response);
                 }
-                response.Message = "Create book successfully";
+                response.Message = "Create discount successfully";
                 return Ok(response);
             }
             catch (Exception ex)
@@ -96,20 +91,19 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBook(int id, [FromForm] BookRequest book)
+        public async Task<IActionResult> UpdateDiscount(int id, [FromBody] DiscountRequest discount)
         {
             var response = new GeneralResponse();
             try
             {
-                var result = await _bookService.UpdateBook(id, book);
+                var result = await _discountService.UpdateDiscountAsync(id, discount);
                 if (!result)
                 {
                     response.Success = false;
-                    response.Message = "Update fail";
+                    response.Message = "Update discount failed";
                     return BadRequest(response);
                 }
-                response.Message = "Update book successfully";
-                response.Data = id;
+                response.Message = "Update discount successfully";
                 return Ok(response);
             }
             catch (Exception ex)
@@ -121,21 +115,19 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
-        public async Task<IActionResult> DeleteBook(int id)
+        public async Task<IActionResult> DeleteDiscount(int id)
         {
             var response = new GeneralResponse();
             try
             {
-                var result = await _bookService.DeleteBook(id);
+                var result = await _discountService.DeleteDiscountAsync(id);
                 if (!result)
                 {
                     response.Success = false;
-                    response.Message = "Delete fail";
+                    response.Message = "Delete discount failed";
                     return BadRequest(response);
                 }
-                response.Message = "Delete book successfully";
-                response.Data = id;
+                response.Message = "Delete discount successfully";
                 return Ok(response);
             }
             catch (Exception ex)

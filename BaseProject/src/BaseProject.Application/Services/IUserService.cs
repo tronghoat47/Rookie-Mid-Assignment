@@ -7,12 +7,14 @@ namespace BaseProject.Application.Services
     {
         Task<User> GetUserByEmailAsync(string email);
 
+        Task<User> GetUserByIdAsync(string userId);
+
         Task<int> ActiveAccount(string email);
 
-        Task<int> InActiveAccount(string email);
+        Task<int> InActiveAccount(string userId);
 
-        Task<int> UpdateUserAsync(UserRequest user);
+        Task<int> UpdateUserAsync(string userId, UserRequest user);
 
-        Task<int> AddMoney(string email, decimal amount);
+        Task<int> AddMoney(string userId, decimal amount);
     }
 }
