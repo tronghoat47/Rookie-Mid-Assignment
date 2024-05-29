@@ -1,10 +1,11 @@
-﻿using BaseProject.Domain.Entities;
+﻿using BaseProject.Application.Models.Requests;
+using BaseProject.Domain.Entities;
 
 namespace BaseProject.Application.Services
 {
     public interface IAuthService
     {
-        Task<User> RegisterAsync(string email, string password, int roleId);
+        Task<User> RegisterAsync(UserRequest userRequest);
 
         Task<(string token, string refreshToken, string role)> LoginAsync(string email, string password);
 

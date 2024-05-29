@@ -22,13 +22,17 @@ namespace BaseProject.Application
             services.AddSingleton(mapper);
             services.AddScoped<ICryptographyHelper, CryptographyHelper>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthService, AuthService>();
+
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<ILovedBookService, LovedBookService>();
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IDiscountService, DiscountService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderDetailService, OrderDetailService>();
         }
     }
 }

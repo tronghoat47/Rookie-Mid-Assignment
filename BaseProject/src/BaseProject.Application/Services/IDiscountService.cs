@@ -1,18 +1,13 @@
 ﻿using BaseProject.Application.Models.Requests;
-using BaseProject.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BaseProject.Application.Models.Responses;
 
 namespace BaseProject.Application.Services
 {
     public interface IDiscountService
     {
-        Task<IEnumerable<Discount>> GetDiscountsAsync();
+        Task<IEnumerable<DiscountResponse>> GetDiscountsAsync();
 
-        Task<Discount> GetDiscountByIdAsync(long id);
+        Task<DiscountResponse> GetDiscountByIdAsync(long id);
 
         Task<bool> CreateDiscountAsync(DiscountRequest discountRequest);
 

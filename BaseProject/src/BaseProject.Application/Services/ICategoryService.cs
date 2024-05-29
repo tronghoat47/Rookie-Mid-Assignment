@@ -1,18 +1,13 @@
 ﻿using BaseProject.Application.Models.Requests;
-using BaseProject.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BaseProject.Application.Models.Responses;
 
 namespace BaseProject.Application.Services
 {
     public interface ICategoryService
     {
-        Task<IEnumerable<Category>> GetCategories();
+        Task<IEnumerable<CategoryResponse>> GetCategories();
 
-        Task<Category> GetCategoryById(long id);
+        Task<CategoryResponse> GetCategoryById(long id);
 
         Task<bool> CreateCategory(CategoryRequest categoryRequest);
 

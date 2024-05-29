@@ -1,11 +1,4 @@
-﻿using BaseProject.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BaseProject.Application.Models.Responses
+﻿namespace BaseProject.Application.Models.Responses
 {
     public class BookResponse
     {
@@ -16,6 +9,7 @@ namespace BaseProject.Application.Models.Responses
         public decimal Price { get; set; }
         public decimal Discount { get; set; }
         public int ReleaseYear { get; set; }
+        public string? Image { get; set; } = string.Empty;
         public long? CategoryId { get; set; }
         public string? CategoryName { get; set; } = string.Empty;
         public ICollection<OrderDetailResponse> OrderDetails { get; set; } = new List<OrderDetailResponse>();

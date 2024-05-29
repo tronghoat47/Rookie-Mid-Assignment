@@ -1,10 +1,5 @@
 ﻿using BaseProject.Application.Models.Requests;
 using BaseProject.Application.Models.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseProject.Application.Services
 {
@@ -19,5 +14,7 @@ namespace BaseProject.Application.Services
         Task<IEnumerable<OrderResponse>> GetOrders();
 
         Task<OrderResponse> GetOrder(long id);
+
+        Task<IEnumerable<OrderResponse>> GetOrdersByUser(string userId);
     }
 }

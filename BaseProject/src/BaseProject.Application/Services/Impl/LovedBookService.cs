@@ -1,72 +1,63 @@
-﻿using BaseProject.Application.Models.Requests;
+﻿using AutoMapper;
+using BaseProject.Application.Models.Requests;
+using BaseProject.Application.Models.Responses;
 using BaseProject.Domain.Entities;
 using BaseProject.Domain.Interfaces;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseProject.Application.Services.Impl
 {
     public class LovedBookService : ILovedBookService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public LovedBookService(IUnitOfWork unitOfWork)
+        public LovedBookService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<bool> CreateLovedBook(LovedBookRequest lovedBookRequest)
         {
-            try
+            var lovedBook = new LovedBook
             {
-                var lovedBook = new LovedBook
-                {
-                    UserId = lovedBookRequest.UserId,
-                    BookId = lovedBookRequest.BookId
-                };
+                UserId = lovedBookRequest.UserId,
+                BookId = lovedBookRequest.BookId
+            };
 
-                await _unitOfWork.LovedBookRepository.AddAsync(lovedBook);
-                return await _unitOfWork.CommitAsync() > 0;
-            }
-            catch (SqlException)
-            {
-                return false;
-            }
+            await _unitOfWork.LovedBookRepository.AddAsync(lovedBook);
+            return await _unitOfWork.CommitAsync() > 0;
         }
 
         public async Task<bool> DeleteLovedBook(string userId, long bookId)
         {
-            try
-            {
-                var lovedBook = await _unitOfWork.LovedBookRepository.GetAsync(lb => lb.UserId == userId && lb.BookId == bookId);
-                if (lovedBook == null)
-                {
-                    throw new KeyNotFoundException("Loved book not found");
-                }
-
-                _unitOfWork.LovedBookRepository.Delete(lovedBook);
-                return await _unitOfWork.CommitAsync() > 0;
-            }
-            catch (SqlException)
+            var lovedBook = await _unitOfWork.LovedBookRepository.GetAsync(lb => lb.UserId == userId && lb.BookId == bookId);
+            if (lovedBook == null)
             {
                 return false;
             }
+
+            _unitOfWork.LovedBookRepository.Delete(lovedBook);
+            return await _unitOfWork.CommitAsync() > 0;
         }
 
-        public async Task<IEnumerable<LovedBook>> GetLovedBooks()
+        public async Task<IEnumerable<LovedBookResponse>> GetLovedBooks()
         {
-            try
-            {
-                return await _unitOfWork.LovedBookRepository.GetAllAsync(x => true, lb => lb.Book, lb => lb.User);
-            }
-            catch (SqlException)
-            {
-                return null;
-            }
+            var lovedBooks = await _unitOfWork.LovedBookRepository.GetAllAsync(lb => true, lb => lb.User, lb => lb.Book);
+            return lovedBooks.Select(lb => _mapper.Map<LovedBookResponse>(lb));
+        }
+
+        public async Task<LovedBookResponse> GetLovedBooksByBook(long bookId)
+        {
+            var lovedBook = await _unitOfWork.LovedBookRepository.GetAsync(lb => lb.BookId == bookId, lb => lb.User, lb => lb.Book);
+            return _mapper.Map<LovedBookResponse>(lovedBook);
+        }
+
+        public async Task<LovedBookResponse> GetLovedBooksByUser(string userId)
+        {
+            var lovedBook = await _unitOfWork.LovedBookRepository.GetAsync(lb => lb.UserId == userId, lb => lb.User, lb => lb.Book);
+            return _mapper.Map<LovedBookResponse>(lovedBook);
         }
     }
 }

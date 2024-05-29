@@ -1,19 +1,18 @@
 ﻿using BaseProject.Application.Models.Requests;
-using BaseProject.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using BaseProject.Application.Models.Responses;
 
 namespace BaseProject.Application.Services
 {
     public interface ILovedBookService
     {
-        Task<IEnumerable<LovedBook>> GetLovedBooks();
+        Task<IEnumerable<LovedBookResponse>> GetLovedBooks();
 
         Task<bool> CreateLovedBook(LovedBookRequest lovedBook);
 
         Task<bool> DeleteLovedBook(string userId, long bookId);
+
+        Task<LovedBookResponse> GetLovedBooksByUser(string userId);
+
+        Task<LovedBookResponse> GetLovedBooksByBook(long bookId);
     }
 }

@@ -1,14 +1,9 @@
-﻿using BaseProject.Domain.Constants;
+﻿using BaseProject.Application.Models.Requests;
+using BaseProject.Domain.Constants;
 using BaseProject.Domain.Entities;
 using BaseProject.Domain.Interfaces;
 using BaseProject.Infrastructure.Helpers;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BaseProject.Application.Services.Impl
 {
@@ -25,23 +20,25 @@ namespace BaseProject.Application.Services.Impl
             _cryptographyHelper = cryptographyHelper;
         }
 
-        public async Task<User> RegisterAsync(string email, string password, int roleId)
+        public async Task<User> RegisterAsync(UserRequest userRequest)
         {
-            var userExist = await _unitOfWork.UserRepository.GetAsync(u => u.Email == email);
+            var userExist = await _unitOfWork.UserRepository.GetAsync(u => u.Email == userRequest.Email);
             if (userExist != null)
             {
                 throw new InvalidOperationException("User already exists");
             }
             var salt = _cryptographyHelper.GenerateSalt();
-            var hashedPassword = _cryptographyHelper.HashPassword(password, salt);
+            var hashedPassword = _cryptographyHelper.HashPassword(userRequest.Password, salt);
 
             var user = new User
             {
-                Email = email,
+                Email = userRequest.Email,
                 PasswordHash = hashedPassword,
                 PasswordSalt = salt,
+                RoleId = (byte)userRequest.RoleId,
                 Status = StatusUsersConstants.IN_ACTIVE,
-                RoleId = (byte)roleId
+                Balance = 0,
+                CreatedAt = DateTime.Now,
             };
 
             await _unitOfWork.UserRepository.AddAsync(user);

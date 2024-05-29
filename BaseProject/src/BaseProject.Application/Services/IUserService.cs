@@ -1,9 +1,5 @@
-﻿using BaseProject.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BaseProject.Application.Models.Requests;
+using BaseProject.Domain.Entities;
 
 namespace BaseProject.Application.Services
 {
@@ -12,5 +8,11 @@ namespace BaseProject.Application.Services
         Task<User> GetUserByEmailAsync(string email);
 
         Task<int> ActiveAccount(string email);
+
+        Task<int> InActiveAccount(string email);
+
+        Task<int> UpdateUserAsync(UserRequest user);
+
+        Task<int> AddMoney(string email, decimal amount);
     }
 }
