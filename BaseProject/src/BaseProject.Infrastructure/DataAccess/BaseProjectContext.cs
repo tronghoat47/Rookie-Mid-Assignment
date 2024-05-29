@@ -2,7 +2,6 @@
 using BaseProject.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.ComponentModel.DataAnnotations;
 
 namespace BaseProject.Infrastructure.DataAccess
 {
@@ -92,6 +91,7 @@ namespace BaseProject.Infrastructure.DataAccess
                 entity.Property(e => e.Discount).HasColumnType("decimal(18, 2)");
                 entity.Property(e => e.ReleaseYear).HasColumnType("int");
                 entity.Property(e => e.CategoryId).HasColumnType("bigint");
+                entity.Property(e => e.Image);
 
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.Books)

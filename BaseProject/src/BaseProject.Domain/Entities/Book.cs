@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BaseProject.Domain.Entities
+﻿namespace BaseProject.Domain.Entities
 {
     public class Book
     {
@@ -15,6 +9,7 @@ namespace BaseProject.Domain.Entities
         public decimal Price { get; set; }
         public decimal Discount { get; set; }
         public int ReleaseYear { get; set; }
+        public string? Image { get; set; } = string.Empty;
         public long? CategoryId { get; set; }
         public Category? Category { get; set; } = new Category();
         public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
