@@ -24,6 +24,16 @@ namespace BaseProject.Infrastructure.Repositories
             _context.Set<T>().Remove(entity);
         }
 
+        public void SoftDelete(T entity)
+        {
+            var property = entity.GetType().GetProperty("IsDeleted");
+            if (property != null)
+            {
+                property.SetValue(entity, true);
+            }
+            _context.Set<T>().Update(entity);
+        }
+
         public async Task<IEnumerable<T>> GetAllAsync()
         {
             return await _context.Set<T>().ToListAsync();

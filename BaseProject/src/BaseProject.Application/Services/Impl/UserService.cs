@@ -28,7 +28,7 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<int> ActiveAccount(string email)
         {
-            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Email == email);
+            var user = await _unitOfWork.UserRepository.GetAsync(u => !u.IsDeleted && u.Email == email);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
@@ -40,7 +40,7 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<int> InActiveAccount(string userId)
         {
-            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId);
+            var user = await _unitOfWork.UserRepository.GetAsync(u => !u.IsDeleted && u.Id == userId);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");
@@ -52,7 +52,7 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<int> UpdateUserAsync(string userId, UserRequest user)
         {
-            var userEntity = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId);
+            var userEntity = await _unitOfWork.UserRepository.GetAsync(u => !u.IsDeleted && u.Id == userId);
             if (userEntity == null)
             {
                 throw new KeyNotFoundException("User not found");

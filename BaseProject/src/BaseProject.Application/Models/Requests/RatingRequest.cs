@@ -11,6 +11,5 @@ namespace BaseProject.Application.Models.Requests
         public int Rate { get; set; }
 
         public string Description { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

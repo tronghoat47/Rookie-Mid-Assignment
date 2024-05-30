@@ -18,6 +18,8 @@ namespace BaseProject.Domain.Interfaces
 
         void Delete(T entity);
 
+        void SoftDelete(T entity);
+
         void RemoveRange(IEnumerable<T> entities);
     }
 }

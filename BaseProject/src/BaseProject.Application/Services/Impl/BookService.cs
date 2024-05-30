@@ -41,12 +41,12 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<bool> DeleteBook(int id)
         {
-            var book = await _unitOfWork.BookRepository.GetAsync(b => b.Id == id);
+            var book = await _unitOfWork.BookRepository.GetAsync(b => !b.IsDeleted && b.Id == id);
             if (book == null)
             {
                 return false;
             }
-            _unitOfWork.BookRepository.Delete(book);
+            _unitOfWork.BookRepository.SoftDelete(book);
             return await _unitOfWork.CommitAsync() > 0;
         }
 
@@ -63,7 +63,7 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<IEnumerable<BookResponse>> GetBooks()
         {
-            var books = await _unitOfWork.BookRepository.GetAllAsync(b => true, b => b.Category);
+            var books = await _unitOfWork.BookRepository.GetAllAsync(b => !b.IsDeleted, b => b.Category);
             return books.Select(b => _mapper.Map<BookResponse>(b));
         }
 
@@ -73,7 +73,7 @@ namespace BaseProject.Application.Services.Impl
             {
                 throw new FileLoadException("Failed to save file");
             }
-            var existingBook = await _unitOfWork.BookRepository.GetAsync(b => b.Id == bookId);
+            var existingBook = await _unitOfWork.BookRepository.GetAsync(b => !b.IsDeleted && b.Id == bookId);
             if (existingBook == null)
             {
                 return false;

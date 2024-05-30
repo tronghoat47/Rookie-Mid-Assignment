@@ -5,6 +5,5 @@
         public string Content { get; set; } = string.Empty;
         public long? BookId { get; set; }
         public string UserId { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

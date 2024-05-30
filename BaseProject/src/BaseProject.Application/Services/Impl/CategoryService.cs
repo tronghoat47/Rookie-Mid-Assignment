@@ -29,7 +29,7 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<bool> UpdateCategory(long cateId, CategoryRequest categoryRequest)
         {
-            var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == cateId);
+            var category = await _unitOfWork.CategoryRepository.GetAsync(c => !c.IsDeleted && c.Id == cateId);
             if (category == null)
                 return false;
             category.Name = categoryRequest.Name;
@@ -39,16 +39,31 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<IEnumerable<CategoryResponse>> GetCategories()
         {
-            var categories = await _unitOfWork.CategoryRepository.GetAllAsync();
+            var categories = await _unitOfWork.CategoryRepository.GetAllAsync(c => !c.IsDeleted);
             return _mapper.Map<IEnumerable<CategoryResponse>>(categories);
         }
 
         public async Task<CategoryResponse> GetCategoryById(long id)
         {
-            var category = await _unitOfWork.CategoryRepository.GetAsync(c => c.Id == id);
+            var category = await _unitOfWork.CategoryRepository.GetAsync(c => !c.IsDeleted && c.Id == id);
             if (category == null)
                 return null;
             return _mapper.Map<CategoryResponse>(category);
+        }
+
+        public async Task<bool> DeleteCategory(long cateId, long newCateId)
+        {
+            var category = await _unitOfWork.CategoryRepository.GetAsync(c => !c.IsDeleted && c.Id == cateId);
+            if (category == null)
+                return false;
+            var books = await _unitOfWork.BookRepository.GetAllAsync(b => b.CategoryId == cateId);
+            foreach (var book in books)
+            {
+                book.CategoryId = newCateId;
+                _unitOfWork.BookRepository.Update(book);
+            }
+            _unitOfWork.CategoryRepository.SoftDelete(category);
+            return await _unitOfWork.CommitAsync() > 0;
         }
     }
 }

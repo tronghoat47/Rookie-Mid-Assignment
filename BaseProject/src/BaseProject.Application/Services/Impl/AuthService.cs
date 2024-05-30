@@ -47,7 +47,7 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<(string token, string refreshToken, string role)> LoginAsync(string email, string password)
         {
-            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Email == email, u => u.Role);
+            var user = await _unitOfWork.UserRepository.GetAsync(u => !u.IsDeleted && u.Email == email, u => u.Role);
             if (user == null || !_cryptographyHelper.VerifyPassword(password, user.PasswordHash, user.PasswordSalt))
             {
                 throw new UnauthorizedAccessException("Email or password incorrect!!!");
@@ -103,7 +103,7 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<int> ResetPasswordAsync(string email, string newPassword)
         {
-            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Email == email);
+            var user = await _unitOfWork.UserRepository.GetAsync(u => !u.IsDeleted && u.Email == email);
             if (user == null)
             {
                 throw new KeyNotFoundException("User not found");

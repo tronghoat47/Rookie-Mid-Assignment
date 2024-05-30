@@ -12,5 +12,7 @@ namespace BaseProject.Application.Services
         Task<bool> CreateCategory(CategoryRequest categoryRequest);
 
         Task<bool> UpdateCategory(long cateId, CategoryRequest categoryRequest);
+
+        Task<bool> DeleteCategory(long cateId, long newCateId);
     }
 }
