@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BaseProject.Application.Models.Responses
 {
-    public class BorrowingDetailResponse
+    public class BorrowingDetailResponse : BaseResponse
     {
         public long BorrowingId { get; set; }
         public long BookId { get; set; }

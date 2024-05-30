@@ -1,6 +1,6 @@
 ﻿namespace BaseProject.Domain.Entities
 {
-    public class Comment
+    public class Comment : BaseEntity
     {
         public long Id { get; set; }
         public string Content { get; set; } = string.Empty;

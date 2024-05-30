@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BaseProject.Application.Models.Responses
 {
-    public class RatingResponse
+    public class RatingResponse : BaseResponse
     {
         public string UserId { get; set; } = string.Empty;
         public long BookId { get; set; }

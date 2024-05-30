@@ -2,7 +2,7 @@
 
 namespace BaseProject.Domain.Entities
 {
-    public class Rating
+    public class Rating : BaseEntity
     {
         public string UserId { get; set; } = string.Empty;
         public User? User { get; set; }

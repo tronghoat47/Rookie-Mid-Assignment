@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using BaseProject.Application.Models.Responses;
-using BaseProject.Domain.Constants;
 using BaseProject.Domain.Entities;
-using System.ComponentModel.DataAnnotations;
 
 namespace BaseProject.Application.Configurations
 {

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BaseProject.Application.Models.Responses
 {
-    public class CommentResponse
+    public class CommentResponse : BaseResponse
     {
         public long Id { get; set; }
         public string Content { get; set; } = string.Empty;

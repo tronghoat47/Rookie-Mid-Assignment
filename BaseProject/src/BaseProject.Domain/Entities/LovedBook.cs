@@ -1,6 +1,6 @@
 ﻿namespace BaseProject.Domain.Entities
 {
-    public class LovedBook
+    public class LovedBook : BaseEntity
     {
         public long BookId { get; set; }
         public Book? Book { get; set; }

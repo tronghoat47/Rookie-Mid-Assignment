@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BaseProject.Domain.Entities
 {
-    public class User
+    public class User : BaseEntity
     {
         public string Id { get; set; } = Guid.NewGuid().ToString("N");
 

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BaseProject.Application.Models.Responses
 {
-    public class BorrowingResponse
+    public class BorrowingResponse : BaseResponse
     {
         public long Id { get; set; }
 

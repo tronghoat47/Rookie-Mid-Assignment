@@ -1,6 +1,6 @@
 ﻿namespace BaseProject.Domain.Entities
 {
-    public class Role
+    public class Role : BaseEntity
     {
         public byte Id { get; set; }
 

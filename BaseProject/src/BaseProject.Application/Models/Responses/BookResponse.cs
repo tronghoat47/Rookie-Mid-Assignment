@@ -1,6 +1,6 @@
 ﻿namespace BaseProject.Application.Models.Responses
 {
-    public class BookResponse
+    public class BookResponse : BaseResponse
     {
         public long Id { get; set; }
         public string Name { get; set; } = string.Empty;

@@ -1,6 +1,6 @@
 ﻿namespace BaseProject.Domain.Entities
 {
-    public class BorrowingDetail
+    public class BorrowingDetail : BaseEntity
     {
         public long BorrowingId { get; set; }
         public Borrowing? Borrowing { get; set; }
@@ -9,6 +9,5 @@
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime ReturnedAt { get; set; } = DateTime.Now.AddDays(7);
         public string Status { get; set; } = string.Empty;
-        public bool IsNoticed { get; set; } = false;
     }
 }

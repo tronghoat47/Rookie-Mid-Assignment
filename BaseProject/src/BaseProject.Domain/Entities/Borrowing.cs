@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BaseProject.Domain.Entities
 {
-    public class Borrowing
+    public class Borrowing : BaseEntity
     {
         public long Id { get; set; }
 

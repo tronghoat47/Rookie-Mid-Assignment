@@ -110,7 +110,6 @@ namespace BaseProject.Infrastructure.DataAccess
                     entity.Property(e => e.CreatedAt).IsRequired();
                     entity.Property(e => e.ReturnedAt).IsRequired();
                     entity.Property(e => e.Status).IsRequired();
-                    entity.Property(e => e.IsNoticed).IsRequired().HasDefaultValue(false);
                     entity.HasOne(e => e.Borrowing)
                           .WithMany(b => b.BorrowingDetails)
                           .HasForeignKey(e => e.BorrowingId);
