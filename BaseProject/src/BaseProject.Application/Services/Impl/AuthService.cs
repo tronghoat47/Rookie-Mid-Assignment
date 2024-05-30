@@ -37,7 +37,6 @@ namespace BaseProject.Application.Services.Impl
                 PasswordSalt = salt,
                 RoleId = (byte)userRequest.RoleId,
                 Status = StatusUsersConstants.IN_ACTIVE,
-                Balance = 0,
                 CreatedAt = DateTime.Now,
             };
 

@@ -1,7 +1,5 @@
-﻿using Azure;
-using BaseProject.Application.Models.Requests;
+﻿using BaseProject.Application.Models.Requests;
 using BaseProject.Application.Services;
-using BaseProject.Domain.Entities;
 using BaseProject.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

@@ -6,7 +6,7 @@ namespace BaseProject.Infrastructure.Repositories
 {
     public class CategoryRepository : GenericRepository<Category>, ICategoryRepository
     {
-        public CategoryRepository(BaseProjectContext context) : base(context)
+        public CategoryRepository(LibraryContext context) : base(context)
         {
         }
     }

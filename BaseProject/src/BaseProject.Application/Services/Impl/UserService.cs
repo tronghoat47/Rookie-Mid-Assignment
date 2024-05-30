@@ -65,17 +65,5 @@ namespace BaseProject.Application.Services.Impl
 
             return await _unitOfWork.CommitAsync();
         }
-
-        public async Task<int> AddMoney(string userId, decimal amount)
-        {
-            var user = await _unitOfWork.UserRepository.GetAsync(u => u.Id == userId);
-            if (user == null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
-
-            user.Balance += amount;
-            return await _unitOfWork.CommitAsync();
-        }
     }
 }

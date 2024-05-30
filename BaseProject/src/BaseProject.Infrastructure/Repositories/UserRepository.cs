@@ -6,7 +6,7 @@ namespace BaseProject.Infrastructure.Repositories
 {
     public class UserRepository : GenericRepository<User>, IUserRepository
     {
-        public UserRepository(BaseProjectContext context) : base(context)
+        public UserRepository(LibraryContext context) : base(context)
         {
         }
     }

@@ -20,12 +20,12 @@ namespace BaseProject.Domain.Entities
 
         public string Status { get; set; } = StatusUsersConstants.IN_ACTIVE;
 
-        public decimal Balance { get; set; } = 0;
-
         public byte RoleId { get; set; } = 0;
         public Role? Role { get; set; }
         public ICollection<RefreshToken>? RefreshTokens { get; set; }
-        public ICollection<Order> Orders { get; set; } = new List<Order>();
         public ICollection<LovedBook> LovedBook { get; set; } = new List<LovedBook>();
+        public ICollection<Rating> Ratings { get; set; } = new List<Rating>();
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public ICollection<Borrowing> Borrowings { get; set; } = new List<Borrowing>();
     }
 }

@@ -16,25 +16,6 @@ namespace BaseProject.WebAPI.Controllers
             _userService = userService;
         }
 
-        [HttpPost("add-money")]
-        public async Task<IActionResult> AddMoney([FromBody] UserAddMoneyRequest request)
-        {
-            var response = new GeneralResponse();
-            try
-            {
-                var result = await _userService.AddMoney(request.UserId, request.Amount);
-                response.Message = "Add money successfully";
-                response.Data = result;
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = ex.Message;
-                return BadRequest(response);
-            }
-        }
-
         [HttpPut("inactive-account/{userId}")]
         public async Task<IActionResult> InActiveAccount(string userId)
         {

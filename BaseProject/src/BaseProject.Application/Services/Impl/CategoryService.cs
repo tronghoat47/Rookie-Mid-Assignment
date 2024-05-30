@@ -3,7 +3,6 @@ using BaseProject.Application.Models.Requests;
 using BaseProject.Application.Models.Responses;
 using BaseProject.Domain.Entities;
 using BaseProject.Domain.Interfaces;
-using Microsoft.Data.SqlClient;
 
 namespace BaseProject.Application.Services.Impl
 {

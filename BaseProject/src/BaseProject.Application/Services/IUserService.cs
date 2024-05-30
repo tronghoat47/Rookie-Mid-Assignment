@@ -14,7 +14,5 @@ namespace BaseProject.Application.Services
         Task<int> InActiveAccount(string userId);
 
         Task<int> UpdateUserAsync(string userId, UserRequest user);
-
-        Task<int> AddMoney(string userId, decimal amount);
     }
 }

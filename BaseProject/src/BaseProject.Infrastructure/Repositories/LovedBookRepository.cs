@@ -6,7 +6,7 @@ namespace BaseProject.Infrastructure.Repositories
 {
     public class LovedBookRepository : GenericRepository<LovedBook>, ILovedBookRepository
     {
-        public LovedBookRepository(BaseProjectContext context) : base(context)
+        public LovedBookRepository(LibraryContext context) : base(context)
         {
         }
     }

@@ -5,7 +5,6 @@ using BaseProject.Application.Models.Responses;
 using BaseProject.Domain.Entities;
 using BaseProject.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 
 namespace BaseProject.Application.Services.Impl
 {
@@ -31,8 +30,6 @@ namespace BaseProject.Application.Services.Impl
                 Name = book.Name,
                 Author = book.Author,
                 Description = book.Description,
-                Price = book.Price,
-                Discount = book.Discount,
                 ReleaseYear = book.ReleaseYear,
                 Image = FileConstant.URL_PATH + book.Image.FileName,
                 CategoryId = book.CategoryId
@@ -85,8 +82,6 @@ namespace BaseProject.Application.Services.Impl
             existingBook.Name = book.Name;
             existingBook.Author = book.Author;
             existingBook.Description = book.Description;
-            existingBook.Price = book.Price;
-            existingBook.Discount = book.Discount;
             existingBook.ReleaseYear = book.ReleaseYear;
             existingBook.Image = FileConstant.URL_PATH + book.Image.FileName;
             existingBook.CategoryId = book.CategoryId;

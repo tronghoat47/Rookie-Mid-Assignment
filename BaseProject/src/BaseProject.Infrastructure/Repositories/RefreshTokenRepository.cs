@@ -6,7 +6,7 @@ namespace BaseProject.Infrastructure.Repositories
 {
     public class RefreshTokenRepository : GenericRepository<RefreshToken>, IRefreshTokenRepository
     {
-        public RefreshTokenRepository(BaseProjectContext context) : base(context)
+        public RefreshTokenRepository(LibraryContext context) : base(context)
         {
         }
     }

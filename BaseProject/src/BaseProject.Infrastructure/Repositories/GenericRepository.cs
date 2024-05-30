@@ -7,9 +7,9 @@ namespace BaseProject.Infrastructure.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        private readonly BaseProjectContext _context;
+        private readonly LibraryContext _context;
 
-        public GenericRepository(BaseProjectContext context)
+        public GenericRepository(LibraryContext context)
         {
             _context = context;
         }

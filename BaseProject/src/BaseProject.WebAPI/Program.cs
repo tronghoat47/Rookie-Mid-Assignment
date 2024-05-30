@@ -27,7 +27,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
 builder.Services.AddInfrastructureServices();
 builder.Services.AddApplicationServices();
-builder.Services.AddDbContext<BaseProjectContext>(options =>
+builder.Services.AddDbContext<LibraryContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
