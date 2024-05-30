@@ -12,6 +12,10 @@ namespace BaseProject.Infrastructure.UnitOfWork
         private IBookRepository _bookRepository;
         private ICategoryRepository _categoryRepository;
         private ILovedBookRepository _lovedBookRepository;
+        private ICommentRepository _commentRepository;
+        private IBorrowingRepository _borrowingRepository;
+        private IBorrowingDetailRepository _borrwingDetailRepository;
+        private IRatingRepository _ratingRepository;
 
         public UnitOfWork(LibraryContext context)
         {
@@ -32,6 +36,18 @@ namespace BaseProject.Infrastructure.UnitOfWork
 
         public ILovedBookRepository LovedBookRepository
             => _lovedBookRepository ??= new LovedBookRepository(_context);
+
+        public ICommentRepository CommentRepository
+            => _commentRepository ??= new CommentRepository(_context);
+
+        public IBorrowingRepository BorrowingRepository
+                => _borrowingRepository ??= new BorrowingRepository(_context);
+
+        public IBorrowingDetailRepository BorrwingDetailRepository
+            => _borrwingDetailRepository ??= new BorrowingDetailRepository(_context);
+
+        public IRatingRepository RatingRepository
+            => _ratingRepository ??= new RatingRepository(_context);
 
         public async Task<int> CommitAsync()
         {
