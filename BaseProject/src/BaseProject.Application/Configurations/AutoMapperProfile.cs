@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using BaseProject.Application.Models.Responses;
+using BaseProject.Domain.Constants;
 using BaseProject.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace BaseProject.Application.Configurations
 {
@@ -16,6 +18,18 @@ namespace BaseProject.Application.Configurations
                 .ForMember(dest => dest.Books, opt => opt.MapFrom(src => src.Books));
 
             CreateMap<LovedBook, LovedBookResponse>()
+                .ForMember(dest => dest.BookName, opt => opt.MapFrom(src => src.Book.Name));
+
+            CreateMap<Rating, RatingResponse>()
+                .ForMember(dest => dest.BookName, opt => opt.MapFrom(src => src.Book.Name));
+
+            CreateMap<Comment, CommentResponse>()
+                .ForMember(dest => dest.BookName, opt => opt.MapFrom(src => src.Book.Name));
+
+            CreateMap<Borrowing, BorrowingResponse>()
+                .ForMember(dest => dest.BorrowingDetails, opt => opt.MapFrom(src => src.BorrowingDetails));
+
+            CreateMap<BorrowingDetail, BorrowingDetailResponse>()
                 .ForMember(dest => dest.BookName, opt => opt.MapFrom(src => src.Book.Name));
         }
     }
