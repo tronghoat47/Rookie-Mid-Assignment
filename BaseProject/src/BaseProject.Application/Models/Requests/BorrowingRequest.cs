@@ -1,4 +1,5 @@
-﻿using BaseProject.Domain.Entities;
+﻿using BaseProject.Domain.Constants;
+using BaseProject.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace BaseProject.Application.Models.Requests
@@ -8,6 +9,18 @@ namespace BaseProject.Application.Models.Requests
         [Required]
         public string RequestorId { get; set; } = string.Empty;
 
-        public ICollection<BorrowingDetail> BorrowingDetails { get; set; } = new List<BorrowingDetail>();
+        [Required]
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public ICollection<BorrowingDetailRequest>? BorrowingDetails { get; set; } = new List<BorrowingDetailRequest>();
+    }
+
+    public class BorrowingUpdateStatusRequest
+    {
+        [Required]
+        public string Status { get; set; } = StatusBorrowing.PENDING;
+
+        [Required]
+        public string ApproverId { get; set; } = string.Empty;
     }
 }

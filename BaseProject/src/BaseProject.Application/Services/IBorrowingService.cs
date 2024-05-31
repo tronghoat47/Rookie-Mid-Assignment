@@ -1,6 +1,23 @@
-﻿namespace BaseProject.Application.Services
+﻿using BaseProject.Application.Models.Requests;
+using BaseProject.Application.Models.Responses;
+
+namespace BaseProject.Application.Services
 {
-    internal interface IBorrowingService
+    public interface IBorrowingService
     {
+        Task<bool> CreateAsync(BorrowingRequest request);
+
+        //send email to approver
+        Task<bool> UpdateStatusAsync(long id, BorrowingUpdateStatusRequest request);
+
+        Task<BorrowingResponse> GetByIdAsync(long id);
+
+        Task<IEnumerable<BorrowingResponse>> GetByRequestorIdAsync(string requestorId);
+
+        Task<IEnumerable<BorrowingResponse>> GetByApproverIdAsync(string approverId);
+
+        Task<IEnumerable<BorrowingResponse>> GetAllAsync();
+
+        Task<bool> DeleteAsync(long id);
     }
 }
