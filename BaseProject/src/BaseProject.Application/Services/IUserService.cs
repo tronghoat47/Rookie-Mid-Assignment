@@ -5,6 +5,8 @@ namespace BaseProject.Application.Services
 {
     public interface IUserService
     {
+        Task<IEnumerable<User>> GetUsersAsync();
+
         Task<User> GetUserByEmailAsync(string email);
 
         Task<User> GetUserByIdAsync(string userId);

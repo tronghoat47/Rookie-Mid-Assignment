@@ -64,7 +64,7 @@ namespace BaseProject.Application.Services.Impl
         public async Task<IEnumerable<BookResponse>> GetBooks()
         {
             var books = await _unitOfWork.BookRepository.GetAllAsync(b => !b.IsDeleted, b => b.Category);
-            return books.Select(b => _mapper.Map<BookResponse>(b));
+            return _mapper.Map<IEnumerable<BookResponse>>(books);
         }
 
         public async Task<bool> UpdateBook(int bookId, BookRequest book)

@@ -2,6 +2,7 @@
 using BaseProject.Application.Services;
 using BaseProject.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace BaseProject.WebAPI.Controllers
 {
@@ -17,6 +18,7 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpGet]
+        [EnableQuery]
         public async Task<IActionResult> GetLovedBooks()
         {
             var response = new GeneralResponse();
@@ -30,7 +32,7 @@ namespace BaseProject.WebAPI.Controllers
                     return NotFound(response);
                 }
                 response.Message = "Get loved books successfully";
-                response.Data = lovedBooks;
+                response.Data = lovedBooks.AsQueryable();
                 return Ok(response);
             }
             catch (Exception ex)

@@ -16,6 +16,11 @@ namespace BaseProject.Application.Services.Impl
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<IEnumerable<User>> GetUsersAsync()
+        {
+            return await _unitOfWork.UserRepository.GetAllAsync(u => true, u => u.Role);
+        }
+
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _unitOfWork.UserRepository.GetAsync(u => u.Email == email, u => u.Role);

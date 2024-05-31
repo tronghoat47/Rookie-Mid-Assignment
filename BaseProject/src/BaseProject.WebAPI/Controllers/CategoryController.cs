@@ -2,6 +2,7 @@
 using BaseProject.Application.Services;
 using BaseProject.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace BaseProject.WebAPI.Controllers
 {
@@ -17,6 +18,7 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpGet]
+        [EnableQuery]
         public async Task<IActionResult> GetCategories()
         {
             var response = new GeneralResponse();
@@ -30,7 +32,7 @@ namespace BaseProject.WebAPI.Controllers
                     return NotFound(response);
                 }
                 response.Message = "Get categories successfully";
-                response.Data = categories;
+                response.Data = categories.ToList().AsQueryable();
                 return Ok(response);
             }
             catch (Exception ex)
@@ -104,6 +106,30 @@ namespace BaseProject.WebAPI.Controllers
                     return BadRequest(response);
                 }
                 response.Message = "Update category successfully";
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                return BadRequest(response);
+            }
+        }
+
+        [HttpDelete("{cateId}/{newCateId}")]
+        public async Task<IActionResult> DeleteCategory(long cateId, long newCateId)
+        {
+            var response = new GeneralResponse();
+            try
+            {
+                var result = await _categoryService.DeleteCategory(cateId, newCateId);
+                if (!result)
+                {
+                    response.Success = false;
+                    response.Message = "Delete category failed";
+                    return BadRequest(response);
+                }
+                response.Message = "Delete category successfully";
                 return Ok(response);
             }
             catch (Exception ex)

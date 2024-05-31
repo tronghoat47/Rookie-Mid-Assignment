@@ -33,7 +33,7 @@ namespace BaseProject.WebAPI.Controllers
                     return NotFound(response);
                 }
                 response.Message = "Get books successfully";
-                response.Data = books;
+                response.Data = books.AsQueryable();
                 return Ok(response);
             }
             catch (Exception ex)
