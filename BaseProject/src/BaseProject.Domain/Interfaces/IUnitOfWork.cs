@@ -10,7 +10,7 @@
         ICommentRepository CommentRepository { get; }
         IRatingRepository RatingRepository { get; }
         IBorrowingRepository BorrowingRepository { get; }
-        IBorrowingDetailRepository BorrwingDetailRepository { get; }
+        IBorrowingDetailRepository BorrowingDetailRepository { get; }
 
         Task<int> CommitAsync();
 

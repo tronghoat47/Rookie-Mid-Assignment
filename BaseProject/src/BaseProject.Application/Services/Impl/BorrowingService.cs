@@ -57,6 +57,13 @@ namespace BaseProject.Application.Services.Impl
             }
             borrowing.Status = request.Status;
             borrowing.ApproverId = request.ApproverId;
+            if (request.Status == StatusBorrowing.APPROVED)
+            {
+                foreach (var detail in borrowing.BorrowingDetails)
+                {
+                    detail.Status = StatusBorrowingDetail.BORROWING;
+                }
+            }
             _unitOfWork.BorrowingRepository.Update(borrowing);
             if (await _unitOfWork.CommitAsync() <= 0)
             {
@@ -64,6 +71,7 @@ namespace BaseProject.Application.Services.Impl
             }
             string subject = string.Empty;
             string content = string.Empty;
+
             if (request.Status == StatusBorrowing.APPROVED)
             {
                 subject = EmailConstants.SUBJECT_BORROWING_APPROVED;

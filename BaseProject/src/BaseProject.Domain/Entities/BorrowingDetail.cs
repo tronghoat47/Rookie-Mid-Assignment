@@ -1,7 +1,11 @@
 ﻿using BaseProject.Domain.Constants;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BaseProject.Domain.Entities
 {
+    [Table("BookBorrowingRequestDetail")]
     public class BorrowingDetail : BaseEntity
     {
         public long BorrowingId { get; set; }
@@ -11,5 +15,15 @@ namespace BaseProject.Domain.Entities
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime ReturnedAt { get; set; } = DateTime.Now.AddDays(7);
         public string Status { get; set; } = StatusBorrowingDetail.PENDING;
+        public string? StatusExtend { get; set; } = string.Empty;
+        /*CREATE PROCEDURE UpdateOverdueBorrowingDetails
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+        UPDATE BookBorrowingRequestDetail
+    SET Status = 'Overdue'
+    WHERE Status<> 'Returned' AND GETDATE() > ReturnedAt;
+        END*/
     }
 }

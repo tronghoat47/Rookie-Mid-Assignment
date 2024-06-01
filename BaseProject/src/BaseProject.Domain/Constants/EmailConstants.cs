@@ -393,7 +393,7 @@
 </html>
 ";
 
-        public static string BodyRejectExtensionEmail(string borrowingId, string bookId) =>
+        public static string BodyRejectExtensionEmail(long borrowingId, long bookId) =>
             $@"
 <!DOCTYPE html>
 <html lang=""en"">
