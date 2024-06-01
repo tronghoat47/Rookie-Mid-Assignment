@@ -43,7 +43,7 @@ namespace BaseProject.Infrastructure.UnitOfWork
         public IBorrowingRepository BorrowingRepository
                 => _borrowingRepository ??= new BorrowingRepository(_context);
 
-        public IBorrowingDetailRepository BorrwingDetailRepository
+        public IBorrowingDetailRepository BorrowingDetailRepository
             => _borrwingDetailRepository ??= new BorrowingDetailRepository(_context);
 
         public IRatingRepository RatingRepository
