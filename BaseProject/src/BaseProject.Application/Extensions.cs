@@ -30,6 +30,10 @@ namespace BaseProject.Application
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<ILovedBookService, LovedBookService>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IBorrowingService, BorrowingService>();
+            services.AddScoped<IBorrowingDetailService, BorrowingDetailService>();
+            services.AddScoped<ICommentService, CommentService>();
+            services.AddScoped<IRatingService, RatingService>();
         }
     }
 }
