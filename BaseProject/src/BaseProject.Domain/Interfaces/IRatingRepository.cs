@@ -4,5 +4,6 @@ namespace BaseProject.Domain.Interfaces
 {
     public interface IRatingRepository : IGenericRepository<Rating>
     {
+        Task<Rating> GetNewestRatingByUserId(string userId);
     }
 }

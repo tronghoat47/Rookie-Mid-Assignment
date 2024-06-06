@@ -12,7 +12,7 @@ namespace BaseProject.Domain.Entities
         [Required]
         public string RequestorId { get; set; } = string.Empty;
 
-        public User? Requestor { get; set; }
+        public User Requestor { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public string Status { get; set; } = StatusBorrowing.PENDING;
         public string? ApproverId { get; set; } = string.Empty;

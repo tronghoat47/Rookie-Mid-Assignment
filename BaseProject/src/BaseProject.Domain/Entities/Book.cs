@@ -9,6 +9,7 @@
         public int ReleaseYear { get; set; }
         public string? Image { get; set; } = string.Empty;
         public long? CategoryId { get; set; }
+        public int DaysForBorrow { get; set; }
         public Category? Category { get; set; }
         public ICollection<LovedBook> LovedBooks { get; set; } = new List<LovedBook>();
         public ICollection<Rating> Ratings { get; set; } = new List<Rating>();

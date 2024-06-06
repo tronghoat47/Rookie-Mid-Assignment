@@ -11,6 +11,7 @@
         IRatingRepository RatingRepository { get; }
         IBorrowingRepository BorrowingRepository { get; }
         IBorrowingDetailRepository BorrowingDetailRepository { get; }
+        ICartRepository CartRepository { get; }
 
         Task<int> CommitAsync();
 
