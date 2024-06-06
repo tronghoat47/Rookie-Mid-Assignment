@@ -5,7 +5,7 @@ import { useContext } from "react";
 const RequireAdmin = (props) => {
   const { children } = props;
   const { auth } = useContext(AuthContext);
-  return auth?.role === `admin` ? children : <Navigate to="/unAuthor" />;
+  return auth?.role === `admin` ? children : <Navigate to="/unauthorized" />;
 };
 
 export default RequireAdmin;

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const UnAuthor = () => {
+const NotFound = () => {
   const navigate = useNavigate();
 
   const goBack = () => {
@@ -11,10 +11,7 @@ const UnAuthor = () => {
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-4">Not Authorized</h1>
-        <p className="text-lg mb-4">
-          Sorry, you do not have permission to access this page.
-        </p>
+        <h1 className="text-3xl font-bold mb-4">Opppss!!!</h1>
         <button
           onClick={goBack}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -24,8 +21,8 @@ const UnAuthor = () => {
       </div>
       <div className="ml-8">
         <img
-          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNl5I7pehpC7N4-_1oxjQ33IjQzRAIM9FVRuuwyUfHc9yCD0lkr_TI-w7yLWbRlhqF1Dc&usqp=CAU"
-          alt="Not Authorized"
+          src="https://img.freepik.com/premium-vector/modern-minimal-found-error-icon-oops-page-found-404-error-page-found-with-concept_599740-716.jpg"
+          alt="Not Found"
           className="max-w-xs max-h-full"
         />
       </div>
@@ -33,4 +30,4 @@ const UnAuthor = () => {
   );
 };
 
-export default UnAuthor;
+export default NotFound;

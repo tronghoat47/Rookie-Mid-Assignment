@@ -1,48 +1,19 @@
 import "./App.css";
 
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Book from "./pages/Books";
-import CreateBook from "./pages/Book/CreateBook";
-import EditBook from "./pages/Book/EditBook";
-import BookDetail from "./pages/Book/BookDetail";
-import Login from "./pages/Login";
-import Profile from "./pages/User/Profile";
+import { Link, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+
 import { AuthProvider } from "./contexts/AuthContext";
-import UnAuthor from "../src/components/UnAuthor";
-import RequireAdmin from "./components/RequireAdmin";
+
+import Layout from "./components/Layout";
+import NotFound from "./components/NotFound";
+import AppRouter from "./router/AppRouter";
 
 const App = () => {
   return (
     <AuthProvider>
       <Router>
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/books" element={<Book />} />
-          <Route
-            path="/books/create"
-            element={
-              <RequireAdmin>
-                <CreateBook />
-              </RequireAdmin>
-            }
-          />
-          <Route
-            path="/books/edit/:id"
-            element={
-              <RequireAdmin>
-                <EditBook />
-              </RequireAdmin>
-            }
-          />
-          <Route path="/books/:id" element={<BookDetail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/unAuthor" element={<UnAuthor />} />
-        </Routes>
+        <AppRouter />
       </Router>
     </AuthProvider>
   );

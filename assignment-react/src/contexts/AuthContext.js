@@ -1,33 +1,42 @@
 import { createContext, useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import axiosInstance from "../utils/axiosInstance";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [auth, setAuth] = useState(null);
+  const [auth, setAuth] = useState({
+    token: null,
+    refreshToken: null,
+    role: null,
+    userId: null,
+  });
   const [isAuthen, setIsAuthen] = useState(!!getToken());
 
   useEffect(() => {
     const token = getToken();
     const refreshToken = getRefreshToken();
     const role = getRole();
-    if (token && refreshToken && role) {
-      setAuth({ token, refreshToken, role });
+    const userId = getUserId();
+    if (token && refreshToken && role && userId) {
+      setAuth({ token, refreshToken, role, userId });
     }
   }, []);
 
   const login = (data) => {
     setAuth(data);
     setIsAuthen(true);
-
-    setTokens(data.token, data.refreshToken, data.role);
+    setTokens(data.token, data.refreshToken, data.role, data.userId);
   };
 
   const logout = async () => {
     await axiosInstance.get("/auths/logout");
-    setAuth(false);
-    setIsAuthen(null);
+    setAuth({
+      token: null,
+      refreshToken: null,
+      role: null,
+      userId: null,
+    });
+    setIsAuthen(false);
     removeTokens();
   };
 
@@ -39,27 +48,31 @@ export const AuthProvider = ({ children }) => {
 };
 
 export const getToken = () => {
-  return Cookies.get(`token`);
+  return localStorage.getItem("token");
 };
 
 export const getRefreshToken = () => {
-  return Cookies.get(`refreshToken`);
+  return localStorage.getItem("refreshToken");
 };
 
 export const getRole = () => {
-  return Cookies.get(`role`);
+  return localStorage.getItem("role");
 };
 
-export const setTokens = (token, refreshToken, role) => {
-  const date = new Date();
-  date.setMinutes(date.getMinutes() + 30);
-  Cookies.set("token", token, { expires: date });
-  Cookies.set("refreshToken", refreshToken, { expires: 7 });
-  Cookies.set("role", role, { expires: 7 });
+export const getUserId = () => {
+  return localStorage.getItem("userId");
+};
+
+export const setTokens = (token, refreshToken, role, userId) => {
+  localStorage.setItem("token", token);
+  localStorage.setItem("refreshToken", refreshToken);
+  localStorage.setItem("role", role);
+  localStorage.setItem("userId", userId);
 };
 
 export const removeTokens = () => {
-  Cookies.remove("token");
-  Cookies.remove("refreshToken");
-  Cookies.remove("role");
+  localStorage.removeItem("token");
+  localStorage.removeItem("refreshToken");
+  localStorage.removeItem("role");
+  localStorage.removeItem("userId");
 };

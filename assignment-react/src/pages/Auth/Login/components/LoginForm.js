@@ -13,7 +13,9 @@ const LoginForm = () => {
     try {
       const response = await axiosInstance.post("/auths/login", values);
       login(response.data.data);
-      navigate("/home");
+      if (response.data.data.role === "admin") {
+        navigate("/admin");
+      } else navigate("/home");
     } catch (error) {
       if (error.response && error.response.status === 409) {
         message.error(error.response.data);

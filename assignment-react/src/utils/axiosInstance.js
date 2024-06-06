@@ -53,8 +53,8 @@ axiosInstance.interceptors.response.use(
           "http://localhost:5012/api/auths/refresh-token",
           { refreshToken: refreshTokenCookie }
         );
-        const { newToken, newRefreshToken, role } = response.data.data;
-        setTokens(newToken, newRefreshToken, role);
+        const { newToken, newRefreshToken, role, userId } = response.data.data;
+        setTokens(newToken, newRefreshToken, role, userId);
         axiosInstance.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${newToken}`;
@@ -63,9 +63,11 @@ axiosInstance.interceptors.response.use(
       } catch (err) {
         message.error("Session expired. Please log in again.");
         removeTokens();
-        window.location.href = "/login";
+        // window.location.href = "/login";
         return Promise.reject(err);
       }
+    } else if (error.response && error.response.status === 403) {
+      message.error("You are not authorized to perform this action");
     }
     return Promise.reject(error);
   }
