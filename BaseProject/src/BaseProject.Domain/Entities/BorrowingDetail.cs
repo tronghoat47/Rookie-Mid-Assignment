@@ -1,7 +1,5 @@
 ﻿using BaseProject.Domain.Constants;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BaseProject.Domain.Entities
 {
