@@ -286,29 +286,34 @@ const BookDetail = () => {
                       </List.Item>
                     )}
                   />
-                  <Form
-                    onFinish={handleAddComment}
-                    layout="inline"
-                    className="mt-4"
-                  >
-                    <Form.Item
-                      name="newComment"
-                      rules={[
-                        { required: true, message: "Please input a comment!" },
-                      ]}
+                  {auth.role === "user" && (
+                    <Form
+                      onFinish={handleAddComment}
+                      layout="inline"
+                      className="mt-4"
                     >
-                      <Input
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                        placeholder="Add a comment"
-                      />
-                    </Form.Item>
-                    <Form.Item>
-                      <Button type="primary" htmlType="submit">
-                        Add Comment
-                      </Button>
-                    </Form.Item>
-                  </Form>
+                      <Form.Item
+                        name="newComment"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please input a comment!",
+                          },
+                        ]}
+                      >
+                        <Input
+                          value={newComment}
+                          onChange={(e) => setNewComment(e.target.value)}
+                          placeholder="Add a comment"
+                        />
+                      </Form.Item>
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Add Comment
+                        </Button>
+                      </Form.Item>
+                    </Form>
+                  )}
                 </div>
                 <div className="w-full md:w-1/2 px-4">
                   <List

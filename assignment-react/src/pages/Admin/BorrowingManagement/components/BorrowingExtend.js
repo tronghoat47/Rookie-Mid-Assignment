@@ -150,8 +150,7 @@ const BorrowingExtend = () => {
           {record.statusExtend === "Pending" ? (
             <div>
               <Button
-                color="green"
-                className="ml-2 cursor-pointer w-6 h-6 inline"
+                className="ml-2 cursor-pointer inline bg-green-400 text-white"
                 onClick={() =>
                   handleExtension(record.bookId, "Approved", record.borrowingId)
                 }
@@ -159,8 +158,7 @@ const BorrowingExtend = () => {
                 Approve
               </Button>
               <Button
-                color="red"
-                className="ml-2 cursor-pointer w-6 h-6 inline"
+                className="ml-2 cursor-pointer inline bg-red-500 text-white"
                 onClick={() =>
                   handleExtension(record.bookId, "Rejected", record.borrowingId)
                 }
