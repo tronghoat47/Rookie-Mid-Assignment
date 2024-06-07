@@ -34,6 +34,7 @@ namespace BaseProject.Infrastructure.DataAccess
         public DbSet<Comment> Comments { get; set; }
         public DbSet<LovedBook> LovedBooks { get; set; }
         public DbSet<Rating> Ratings { get; set; }
+        public DbSet<Cart> Carts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -117,6 +118,11 @@ namespace BaseProject.Infrastructure.DataAccess
                           .WithMany(b => b.BorrowingDetails)
                           .HasForeignKey(e => e.BookId);
                 });
+
+            modelBuilder.Entity<Cart>(entity =>
+            {
+                entity.HasKey(e => new { e.BookId, e.UserId });
+            });
 
             modelBuilder.Entity<Comment>(entity =>
             {

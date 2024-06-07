@@ -16,6 +16,7 @@ namespace BaseProject.Infrastructure.UnitOfWork
         private IBorrowingRepository _borrowingRepository;
         private IBorrowingDetailRepository _borrwingDetailRepository;
         private IRatingRepository _ratingRepository;
+        public ICartRepository _cartRepository;
 
         public UnitOfWork(LibraryContext context)
         {
@@ -48,6 +49,9 @@ namespace BaseProject.Infrastructure.UnitOfWork
 
         public IRatingRepository RatingRepository
             => _ratingRepository ??= new RatingRepository(_context);
+
+        public ICartRepository CartRepository
+            => _cartRepository ??= new CartRepository(_context);
 
         public async Task<int> CommitAsync()
         {
