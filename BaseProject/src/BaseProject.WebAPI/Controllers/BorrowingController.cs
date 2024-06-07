@@ -172,7 +172,7 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "user")]
         public async Task<IActionResult> DeleteBorrowing(long id)
         {
             var response = new GeneralResponse();
