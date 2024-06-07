@@ -37,26 +37,32 @@ namespace BaseProject.Application.Services.Impl
                 return false;
             }
 
-            _unitOfWork.LovedBookRepository.SoftDelete(lovedBook);
+            _unitOfWork.LovedBookRepository.Delete(lovedBook);
             return await _unitOfWork.CommitAsync() > 0;
         }
 
-        public async Task<IEnumerable<LovedBookResponse>> GetLovedBooks()
+        //public async Task<IEnumerable<LovedBookResponse>> GetLovedBooks()
+        //{
+        //    var lovedBooks = await _unitOfWork.LovedBookRepository.GetAllAsync(lb => !lb.IsDeleted, lb => lb.User, lb => lb.Book);
+        //    return lovedBooks.Select(lb => _mapper.Map<LovedBookResponse>(lb));
+        //}
+
+        //public async Task<IEnumerable<LovedBookResponse>> GetLovedBooksByBook(long bookId)
+        //{
+        //    var lovedBook = await _unitOfWork.LovedBookRepository.GetAllAsync(lb => !lb.IsDeleted && lb.BookId == bookId, lb => lb.User, lb => lb.Book);
+        //    return _mapper.Map<IEnumerable<LovedBookResponse>>(lovedBook);
+        //}
+
+        public async Task<IEnumerable<LovedBookResponse>> GetLovedBooksByUser(string userId)
         {
-            var lovedBooks = await _unitOfWork.LovedBookRepository.GetAllAsync(lb => !lb.IsDeleted, lb => lb.User, lb => lb.Book);
-            return lovedBooks.Select(lb => _mapper.Map<LovedBookResponse>(lb));
+            var lovedBook = await _unitOfWork.LovedBookRepository.GetAllAsync(lb => !lb.IsDeleted && lb.UserId == userId, lb => lb.User, lb => lb.Book);
+            return _mapper.Map<IEnumerable<LovedBookResponse>>(lovedBook);
         }
 
-        public async Task<LovedBookResponse> GetLovedBooksByBook(long bookId)
-        {
-            var lovedBook = await _unitOfWork.LovedBookRepository.GetAsync(lb => !lb.IsDeleted && lb.BookId == bookId, lb => lb.User, lb => lb.Book);
-            return _mapper.Map<LovedBookResponse>(lovedBook);
-        }
-
-        public async Task<LovedBookResponse> GetLovedBooksByUser(string userId)
-        {
-            var lovedBook = await _unitOfWork.LovedBookRepository.GetAsync(lb => !lb.IsDeleted && lb.UserId == userId, lb => lb.User, lb => lb.Book);
-            return _mapper.Map<LovedBookResponse>(lovedBook);
-        }
+        //public async Task<LovedBookResponse> GetLovedBook(string userId, long bookId)
+        //{
+        //    var lovedBook = await _unitOfWork.LovedBookRepository.GetAsync(lb => !lb.IsDeleted && lb.UserId == userId && lb.BookId == bookId, lb => lb.User, lb => lb.Book);
+        //    return _mapper.Map<LovedBookResponse>(lovedBook);
+        //}
     }
 }

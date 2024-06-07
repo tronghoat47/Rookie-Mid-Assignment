@@ -6,6 +6,7 @@ namespace BaseProject.Application.Models.Requests
     {
         public long BorrowingId { get; set; }
         public long BookId { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public DateTime ReturnedAt { get; set; } = DateTime.Now.AddDays(7);
     }
 
@@ -22,5 +23,6 @@ namespace BaseProject.Application.Models.Requests
     public class BorrowingDetailUpdateStatusExtendRequest
     {
         public string StatusExtend { get; set; } = StatusBorrowingExtend.PENDING;
+        public DateTime? ReturnedAt { get; set; }
     }
 }

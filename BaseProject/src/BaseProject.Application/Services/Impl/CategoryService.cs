@@ -39,13 +39,13 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<IEnumerable<CategoryResponse>> GetCategories()
         {
-            var categories = await _unitOfWork.CategoryRepository.GetAllAsync(c => !c.IsDeleted);
+            var categories = await _unitOfWork.CategoryRepository.GetAllAsync(c => !c.IsDeleted, c => c.Books);
             return _mapper.Map<IEnumerable<CategoryResponse>>(categories);
         }
 
         public async Task<CategoryResponse> GetCategoryById(long id)
         {
-            var category = await _unitOfWork.CategoryRepository.GetAsync(c => !c.IsDeleted && c.Id == id);
+            var category = await _unitOfWork.CategoryRepository.GetAsync(c => !c.IsDeleted && c.Id == id, c => c.Books);
             if (category == null)
                 return null;
             return _mapper.Map<CategoryResponse>(category);

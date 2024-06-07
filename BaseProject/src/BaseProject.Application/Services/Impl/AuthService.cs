@@ -20,7 +20,7 @@ namespace BaseProject.Application.Services.Impl
             _cryptographyHelper = cryptographyHelper;
         }
 
-        public async Task<User> RegisterAsync(UserRequest userRequest)
+        public async Task<User> RegisterAsync(UserRegisterRequest userRequest)
         {
             var userExist = await _unitOfWork.UserRepository.GetAsync(u => u.Email == userRequest.Email);
             if (userExist != null)
@@ -33,6 +33,7 @@ namespace BaseProject.Application.Services.Impl
             var user = new User
             {
                 Email = userRequest.Email,
+                Name = userRequest.Name,
                 PasswordHash = hashedPassword,
                 PasswordSalt = salt,
                 RoleId = (byte)userRequest.RoleId,
@@ -45,7 +46,7 @@ namespace BaseProject.Application.Services.Impl
             return user;
         }
 
-        public async Task<(string token, string refreshToken, string role)> LoginAsync(string email, string password)
+        public async Task<(string token, string refreshToken, string role, string userId)> LoginAsync(string email, string password)
         {
             var user = await _unitOfWork.UserRepository.GetAsync(u => !u.IsDeleted && u.Email == email, u => u.Role);
             if (user == null || !_cryptographyHelper.VerifyPassword(password, user.PasswordHash, user.PasswordSalt))
@@ -65,10 +66,10 @@ namespace BaseProject.Application.Services.Impl
             await _unitOfWork.RefreshTokenRepository.AddAsync(refreshToken);
             await _unitOfWork.CommitAsync();
 
-            return (token, refreshToken.TokenHash, user.Role.Name);
+            return (token, refreshToken.TokenHash, user.Role.Name, user.Id);
         }
 
-        public async Task<(string token, string refreshToken, string role)> RefreshTokenAsync(string refreshToken)
+        public async Task<(string token, string refreshToken, string role, string userId)> RefreshTokenAsync(string refreshToken)
         {
             var token = await _unitOfWork.RefreshTokenRepository.GetAsync(rt => rt.TokenHash == refreshToken)
                 .ConfigureAwait(false);
@@ -91,7 +92,7 @@ namespace BaseProject.Application.Services.Impl
             await _unitOfWork.RefreshTokenRepository.AddAsync(newRefreshToken);
             await _unitOfWork.CommitAsync();
 
-            return (newJwtToken, newRefreshToken.TokenHash, user.Role.Name);
+            return (newJwtToken, newRefreshToken.TokenHash, user.Role.Name, user.Id);
         }
 
         public async Task<int> LogoutAsync(string userId)
@@ -101,20 +102,20 @@ namespace BaseProject.Application.Services.Impl
             return await _unitOfWork.CommitAsync();
         }
 
-        public async Task<int> ResetPasswordAsync(string email, string newPassword)
-        {
-            var user = await _unitOfWork.UserRepository.GetAsync(u => !u.IsDeleted && u.Email == email);
-            if (user == null)
-            {
-                throw new KeyNotFoundException("User not found");
-            }
+        //public async Task<int> ResetPasswordAsync(string email, string newPassword)
+        //{
+        //    var user = await _unitOfWork.UserRepository.GetAsync(u => !u.IsDeleted && u.Email == email);
+        //    if (user == null)
+        //    {
+        //        throw new KeyNotFoundException("User not found");
+        //    }
 
-            var passwordSalt = _cryptographyHelper.GenerateSalt();
-            var passwordHash = _cryptographyHelper.HashPassword(newPassword, passwordSalt);
+        //    var passwordSalt = _cryptographyHelper.GenerateSalt();
+        //    var passwordHash = _cryptographyHelper.HashPassword(newPassword, passwordSalt);
 
-            user.PasswordSalt = passwordSalt;
-            user.PasswordHash = passwordHash;
-            return await _unitOfWork.CommitAsync();
-        }
+        //    user.PasswordSalt = passwordSalt;
+        //    user.PasswordHash = passwordHash;
+        //    return await _unitOfWork.CommitAsync();
+        //}
     }
 }

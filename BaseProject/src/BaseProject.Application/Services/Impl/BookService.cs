@@ -2,6 +2,7 @@
 using BaseProject.Application.Constants;
 using BaseProject.Application.Models.Requests;
 using BaseProject.Application.Models.Responses;
+using BaseProject.Domain.Constants;
 using BaseProject.Domain.Entities;
 using BaseProject.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,7 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<bool> CreateBook(BookRequest book)
         {
-            if (!await SaveFileAsync(book.Image))
+            if (book.Image != null && !await SaveFileAsync(book.Image))
             {
                 throw new FileLoadException("Failed to save file");
             }
@@ -31,8 +32,9 @@ namespace BaseProject.Application.Services.Impl
                 Author = book.Author,
                 Description = book.Description,
                 ReleaseYear = book.ReleaseYear,
-                Image = FileConstant.URL_PATH + book.Image.FileName,
-                CategoryId = book.CategoryId
+                Image = book.Image == null ? string.Empty : FileConstant.URL_PATH + book.Image.FileName,
+                CategoryId = book.CategoryId,
+                DaysForBorrow = book.DaysForBorrow
             };
 
             await _unitOfWork.BookRepository.AddAsync(newBook);
@@ -41,10 +43,16 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<bool> DeleteBook(int id)
         {
-            var book = await _unitOfWork.BookRepository.GetAsync(b => !b.IsDeleted && b.Id == id);
+            var book = await _unitOfWork.BookRepository.GetAsync(b => !b.IsDeleted && b.Id == id, b => b.BorrowingDetails);
             if (book == null)
             {
-                return false;
+                throw new KeyNotFoundException("Book not found");
+            }
+
+            foreach (var item in book.BorrowingDetails)
+            {
+                if (item.Status == StatusBorrowingDetail.PENDING)
+                    _unitOfWork.BorrowingDetailRepository.Delete(item);
             }
             _unitOfWork.BookRepository.SoftDelete(book);
             return await _unitOfWork.CommitAsync() > 0;
@@ -52,7 +60,8 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<BookResponse> GetBook(int id)
         {
-            var book = await _unitOfWork.BookRepository.GetAsync(b => b.Id == id, b => b.Category);
+            var book = await _unitOfWork.BookRepository.GetAsync(b => b.Id == id,
+                b => b.Category, b => b.LovedBooks, b => b.Ratings, b => b.Comments);
             if (book == null)
             {
                 return null;
@@ -63,34 +72,57 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<IEnumerable<BookResponse>> GetBooks()
         {
-            var books = await _unitOfWork.BookRepository.GetAllAsync(b => !b.IsDeleted, b => b.Category);
+            var books = await _unitOfWork.BookRepository.GetAllAsync(b => !b.IsDeleted);
             return _mapper.Map<IEnumerable<BookResponse>>(books);
         }
 
         public async Task<bool> UpdateBook(int bookId, BookRequest book)
         {
-            if (book.Image != null && !await SaveFileAsync(book.Image))
-            {
-                throw new FileLoadException("Failed to save file");
-            }
             var existingBook = await _unitOfWork.BookRepository.GetAsync(b => !b.IsDeleted && b.Id == bookId);
             if (existingBook == null)
             {
                 return false;
             }
 
+            if (book.Image == null)
+            {
+                existingBook.Image = book.ImageUrl;
+            }
+            else if (!await SaveFileAsync(book.Image))
+            {
+                throw new FileLoadException("Failed to save file");
+            }
+            else
+            {
+                existingBook.Image = FileConstant.URL_PATH + book.Image.FileName;
+            }
+
             existingBook.Name = book.Name;
             existingBook.Author = book.Author;
             existingBook.Description = book.Description;
             existingBook.ReleaseYear = book.ReleaseYear;
-            existingBook.Image = FileConstant.URL_PATH + book.Image.FileName;
             existingBook.CategoryId = book.CategoryId;
+            existingBook.DaysForBorrow = book.DaysForBorrow;
 
             _unitOfWork.BookRepository.Update(existingBook);
             return await _unitOfWork.CommitAsync() > 0;
         }
 
-        private async Task<bool> SaveFileAsync(IFormFile file)
+        public async Task<IEnumerable<BookResponse>> GetTop10NewsBook()
+        {
+            var books = await _unitOfWork.BookRepository.GetAllAsync(b => !b.IsDeleted,
+                b => b.Category, b => b.LovedBooks, b => b.Ratings, b => b.Comments);
+            return _mapper.Map<IEnumerable<BookResponse>>(books.OrderByDescending(b => b.ReleaseYear).Take(10));
+        }
+
+        public async Task<IEnumerable<BookResponse>> GetTop10LovedBook()
+        {
+            var books = await _unitOfWork.BookRepository.GetAllAsync(b => !b.IsDeleted,
+                b => b.Category, b => b.LovedBooks, b => b.Ratings, b => b.Comments);
+            return _mapper.Map<IEnumerable<BookResponse>>(books.OrderByDescending(b => b.LovedBooks.Count).Take(10));
+        }
+
+        public async Task<bool> SaveFileAsync(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {
@@ -110,6 +142,25 @@ namespace BaseProject.Application.Services.Impl
             {
                 return false;
             }
+        }
+
+        public async Task<IEnumerable<BookResponse>> GetNotBorrowedBooks(long borrowingId)
+        {
+            var borrowing = await _unitOfWork.BookRepository
+        .GetAllAsync(book => !book.BorrowingDetails.Any(bd => bd.BorrowingId == borrowingId && !bd.IsDeleted));
+
+            return _mapper.Map<IEnumerable<BookResponse>>(borrowing);
+        }
+
+        public async Task<IEnumerable<BookResponse>> GetBooks(FormFilterBook formFilter)
+        {
+            int pageSize = formFilter.PageSize ?? 10;
+            int pageNumber = formFilter.PageNumber ?? 1;
+            var books = await _unitOfWork.BookRepository.GetBooks(formFilter.Name,
+                    formFilter.Author, formFilter.ReleaseYearFrom, formFilter.ReleaseYearTo,
+                    formFilter.CategoryName, pageNumber, pageSize);
+
+            return _mapper.Map<IEnumerable<BookResponse>>(books);
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using BaseProject.Domain.Constants;
-using BaseProject.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace BaseProject.Application.Models.Requests

@@ -23,6 +23,10 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<bool> CreateAsync(BorrowingRequest request)
         {
+            if (request.BorrowingDetails.Count > 5)
+            {
+                throw new IOException("Don't exceed 5 borrowed books per request borrow");
+            }
             var borrowing = new Borrowing
             {
                 RequestorId = request.RequestorId,
@@ -30,17 +34,13 @@ namespace BaseProject.Application.Services.Impl
                 Status = StatusBorrowing.PENDING,
                 BorrowingDetails = request.BorrowingDetails?.Select(b => new BorrowingDetail
                 {
-                    BorrowingId = b.BorrowingId,
                     BookId = b.BookId,
                     ReturnedAt = b.ReturnedAt,
                 }).ToList() ?? new List<BorrowingDetail>()
             };
-            if (borrowing.BorrowingDetails.Count > 5)
-            {
-                throw new IOException("Don't exceed 5 borrowed books per request borrow");
-            }
-            var borrowings = await _unitOfWork.BorrowingRepository.GetAllAsync(b => b.RequestorId == request.RequestorId && b.CreatedAt.Month == DateTime.Now.Month);
-            if (borrowings.Count() > 3)
+
+            var borrowings = await _unitOfWork.BorrowingRepository.GetAllAsync(b => b.RequestorId == request.RequestorId && b.CreatedAt.Year == borrowing.CreatedAt.Year && b.CreatedAt.Month == borrowing.CreatedAt.Month);
+            if (borrowings.Count() >= 3)
             {
                 throw new IOException("Limit 3 borrowed reuest per month");
             }
@@ -50,7 +50,7 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<bool> UpdateStatusAsync(long id, BorrowingUpdateStatusRequest request)
         {
-            var borrowing = await _unitOfWork.BorrowingRepository.GetAsync(b => !b.IsDeleted && b.Id == id, b => b.Requestor);
+            var borrowing = await _unitOfWork.BorrowingRepository.GetAsync(b => !b.IsDeleted && b.Id == id, b => b.Requestor, b => b.BorrowingDetails);
             if (borrowing == null)
             {
                 return false;
@@ -62,6 +62,13 @@ namespace BaseProject.Application.Services.Impl
                 foreach (var detail in borrowing.BorrowingDetails)
                 {
                     detail.Status = StatusBorrowingDetail.BORROWING;
+                }
+            }
+            else
+            {
+                foreach (var detail in borrowing.BorrowingDetails)
+                {
+                    detail.Status = StatusBorrowingDetail.REJECTED;
                 }
             }
             _unitOfWork.BorrowingRepository.Update(borrowing);
@@ -88,7 +95,8 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<BorrowingResponse> GetByIdAsync(long id)
         {
-            var borrowing = await _unitOfWork.BorrowingRepository.GetAsync(b => !b.IsDeleted && b.Id == id, b => b.BorrowingDetails);
+            var borrowing = await _unitOfWork.BorrowingRepository.GetAsync(b => !b.IsDeleted && b.Id == id
+            , b => b.Approver, b => b.Requestor);
             if (borrowing == null)
             {
                 return null;
@@ -98,19 +106,21 @@ namespace BaseProject.Application.Services.Impl
 
         public async Task<IEnumerable<BorrowingResponse>> GetByRequestorIdAsync(string requestorId)
         {
-            var borrowings = await _unitOfWork.BorrowingRepository.GetAllAsync(b => b.RequestorId == requestorId, b => b.Requestor, b => b.Approver);
+            var borrowings = await _unitOfWork.BorrowingRepository.GetAllAsync(b => !b.IsDeleted && b.RequestorId == requestorId
+            , b => b.Requestor, b => b.Approver);
             return _mapper.Map<IEnumerable<BorrowingResponse>>(borrowings);
         }
 
-        public async Task<IEnumerable<BorrowingResponse>> GetByApproverIdAsync(string approverId)
-        {
-            var borrowings = await _unitOfWork.BorrowingRepository.GetAllAsync(b => b.ApproverId == approverId, b => b.Requestor, b => b.Approver);
-            return _mapper.Map<IEnumerable<BorrowingResponse>>(borrowings);
-        }
+        //public async Task<IEnumerable<BorrowingResponse>> GetByApproverIdAsync(string approverId)
+        //{
+        //    var borrowings = await _unitOfWork.BorrowingRepository.GetAllAsync(b => b.ApproverId == approverId
+        //    , b => b.Requestor, b => b.Approver);
+        //    return _mapper.Map<IEnumerable<BorrowingResponse>>(borrowings);
+        //}
 
         public async Task<IEnumerable<BorrowingResponse>> GetAllAsync()
         {
-            var borrowings = await _unitOfWork.BorrowingRepository.GetAllAsync(b => true, b => b.Requestor, b => b.Approver);
+            var borrowings = await _unitOfWork.BorrowingRepository.GetAllAsync(b => !b.IsDeleted, b => b.Requestor, b => b.Approver);
             return _mapper.Map<IEnumerable<BorrowingResponse>>(borrowings);
         }
 
@@ -120,6 +130,12 @@ namespace BaseProject.Application.Services.Impl
             if (borrowing == null)
             {
                 return false;
+            }
+
+            var borrowingDetails = borrowing.BorrowingDetails;
+            foreach (var detail in borrowingDetails)
+            {
+                _unitOfWork.BorrowingDetailRepository.SoftDelete(detail);
             }
             _unitOfWork.BorrowingRepository.SoftDelete(borrowing);
             return await _unitOfWork.CommitAsync() > 0;

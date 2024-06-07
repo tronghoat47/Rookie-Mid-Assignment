@@ -14,5 +14,13 @@ namespace BaseProject.Application.Services
         Task<BookResponse> GetBook(int id);
 
         Task<IEnumerable<BookResponse>> GetBooks();
+
+        Task<IEnumerable<BookResponse>> GetBooks(FormFilterBook formFilter);
+
+        Task<IEnumerable<BookResponse>> GetTop10NewsBook();
+
+        Task<IEnumerable<BookResponse>> GetTop10LovedBook();
+
+        Task<IEnumerable<BookResponse>> GetNotBorrowedBooks(long borrowingId);
     }
 }

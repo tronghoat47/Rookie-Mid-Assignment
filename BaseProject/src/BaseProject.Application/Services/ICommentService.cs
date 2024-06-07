@@ -11,12 +11,14 @@ namespace BaseProject.Application.Services
 
         Task<bool> DeleteComment(long commentId);
 
-        Task<CommentResponse> GetCommentById(long commentId);
+        //Task<CommentResponse> GetCommentById(long commentId);
 
         Task<IEnumerable<CommentResponse>> GetCommentsByUserId(string userId);
 
         Task<IEnumerable<CommentResponse>> GetCommentsByBookId(long bookId);
 
-        Task<IEnumerable<CommentResponse>> GetComments();
+        //Task<IEnumerable<CommentResponse>> GetComments();
+
+        Task<CommentResponse> GetNewestCommentsByUserId(string userId);
     }
 }

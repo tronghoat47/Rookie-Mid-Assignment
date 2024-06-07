@@ -5,14 +5,14 @@ namespace BaseProject.Application.Services
 {
     public interface IAuthService
     {
-        Task<User> RegisterAsync(UserRequest userRequest);
+        Task<User> RegisterAsync(UserRegisterRequest userRequest);
 
-        Task<(string token, string refreshToken, string role)> LoginAsync(string email, string password);
+        Task<(string token, string refreshToken, string role, string userId)> LoginAsync(string email, string password);
 
-        Task<(string token, string refreshToken, string role)> RefreshTokenAsync(string refreshToken);
+        Task<(string token, string refreshToken, string role, string userId)> RefreshTokenAsync(string refreshToken);
 
         Task<int> LogoutAsync(string userId);
 
-        Task<int> ResetPasswordAsync(string email, string newPassword);
+        //Task<int> ResetPasswordAsync(string email, string newPassword);
     }
 }

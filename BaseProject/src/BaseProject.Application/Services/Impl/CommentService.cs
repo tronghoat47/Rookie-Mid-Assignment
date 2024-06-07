@@ -37,24 +37,25 @@ namespace BaseProject.Application.Services.Impl
             {
                 return false;
             }
-            _unitOfWork.CommentRepository.SoftDelete(comment);
+            _unitOfWork.CommentRepository.Delete(comment);
             return await _unitOfWork.CommitAsync() > 0;
         }
 
-        public async Task<CommentResponse> GetCommentById(long commentId)
-        {
-            var comment = await _unitOfWork.CommentRepository.GetAsync(c => c.Id == commentId);
-            if (comment == null)
-            {
-                return null;
-            }
+        //public async Task<CommentResponse> GetCommentById(long commentId)
+        //{
+        //    var comment = await _unitOfWork.CommentRepository.GetAsync(c => c.Id == commentId);
+        //    if (comment == null)
+        //    {
+        //        return null;
+        //    }
 
-            return _mapper.Map<CommentResponse>(comment);
-        }
+        //    return _mapper.Map<CommentResponse>(comment);
+        //}
 
         public async Task<IEnumerable<CommentResponse>> GetCommentsByBookId(long bookId)
         {
-            var comments = await _unitOfWork.CommentRepository.GetAllAsync(c => !c.IsDeleted && c.BookId == bookId);
+            var comments = await _unitOfWork.CommentRepository.GetAllAsync(c => !c.IsDeleted && c.BookId == bookId
+            , c => c.User);
             return _mapper.Map<IEnumerable<CommentResponse>>(comments);
         }
 
@@ -76,10 +77,22 @@ namespace BaseProject.Application.Services.Impl
             return await _unitOfWork.CommitAsync() > 0;
         }
 
-        public async Task<IEnumerable<CommentResponse>> GetComments()
+        //public async Task<IEnumerable<CommentResponse>> GetComments()
+        //{
+        //    var comments = await _unitOfWork.CommentRepository.GetAllAsync(c => !c.IsDeleted);
+        //    return _mapper.Map<IEnumerable<CommentResponse>>(comments);
+        //}
+
+        //Task<CommentResponse> GetNewestCommentsByUserId(string userId);
+        public async Task<CommentResponse> GetNewestCommentsByUserId(string userId)
         {
-            var comments = await _unitOfWork.CommentRepository.GetAllAsync(c => !c.IsDeleted);
-            return _mapper.Map<IEnumerable<CommentResponse>>(comments);
+            var comment = await _unitOfWork.CommentRepository.GetNewestCommentByUserId(userId);
+            if (comment == null)
+            {
+                return null;
+            }
+
+            return _mapper.Map<CommentResponse>(comment);
         }
     }
 }

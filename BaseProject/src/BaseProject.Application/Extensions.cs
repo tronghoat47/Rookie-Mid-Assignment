@@ -34,6 +34,7 @@ namespace BaseProject.Application
             services.AddScoped<IBorrowingDetailService, BorrowingDetailService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IRatingService, RatingService>();
+            services.AddScoped<ICartService, CartService>();
         }
     }
 }
