@@ -8,7 +8,7 @@ namespace BaseProject.WebAPI.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    public class UserController : Controller
+    public class UserController : BaseApiController
     {
         private readonly IUserService _userService;
 
@@ -32,7 +32,7 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
@@ -51,7 +51,7 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
@@ -77,7 +77,7 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
@@ -102,7 +102,7 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
@@ -127,7 +127,7 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
     }

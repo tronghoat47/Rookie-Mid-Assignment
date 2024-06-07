@@ -1,14 +1,14 @@
 ﻿using BaseProject.Application.Models.Requests;
 using BaseProject.Application.Services;
 using BaseProject.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
 
 namespace BaseProject.WebAPI.Controllers
 {
     [Route("api/comments")]
     [ApiController]
-    public class CommentController : Controller
+    public class CommentController : BaseApiController
     {
         private readonly ICommentService _commentService;
 
@@ -17,59 +17,59 @@ namespace BaseProject.WebAPI.Controllers
             _commentService = commentService;
         }
 
-        [HttpGet]
-        [EnableQuery]
-        public async Task<IActionResult> GetComments()
-        {
-            var response = new GeneralResponse();
-            try
-            {
-                var comments = await _commentService.GetComments();
-                if (comments == null || !comments.Any())
-                {
-                    response.Success = false;
-                    response.Message = "No comments found";
-                    return NotFound(response);
-                }
-                response.Message = "Get comments successfully";
-                response.Data = comments.AsQueryable();
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = ex.Message;
-                return BadRequest(response);
-            }
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetComments()
+        //{
+        //    var response = new GeneralResponse();
+        //    try
+        //    {
+        //        var comments = await _commentService.GetComments();
+        //        if (comments == null || !comments.Any())
+        //        {
+        //            response.Success = false;
+        //            response.Message = "No comments found";
+        //            return NotFound(response);
+        //        }
+        //        response.Message = "Get comments successfully";
+        //        response.Data = comments.ToList();
+        //        return Ok(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Success = false;
+        //        response.Message = ex.Message;
+        //        return Conflict(response);
+        //    }
+        //}
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetComment(long id)
-        {
-            var response = new GeneralResponse();
-            try
-            {
-                var comment = await _commentService.GetCommentById(id);
-                if (comment == null)
-                {
-                    response.Success = false;
-                    response.Message = "Comment not found";
-                    return NotFound(response);
-                }
-                response.Message = "Get comment successfully";
-                response.Data = comment;
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                response.Success = false;
-                response.Message = ex.Message;
-                return BadRequest(response);
-            }
-        }
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetComment(long id)
+        //{
+        //    var response = new GeneralResponse();
+        //    try
+        //    {
+        //        var comment = await _commentService.GetCommentById(id);
+        //        if (comment == null)
+        //        {
+        //            response.Success = false;
+        //            response.Message = "Comment not found";
+        //            return NotFound(response);
+        //        }
+        //        response.Message = "Get comment successfully";
+        //        response.Data = comment;
+        //        return Ok(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Success = false;
+        //        response.Message = ex.Message;
+        //        return Conflict(response);
+        //    }
+        //}
 
         [HttpPost]
-        public async Task<IActionResult> CreateComment([FromForm] CommentRequest comment)
+        [Authorize(Roles = "user")]
+        public async Task<IActionResult> CreateComment(CommentRequest comment)
         {
             var response = new GeneralResponse();
             try
@@ -79,7 +79,7 @@ namespace BaseProject.WebAPI.Controllers
                 {
                     response.Success = false;
                     response.Message = "Create fail";
-                    return BadRequest(response);
+                    return Conflict(response);
                 }
                 response.Message = "Create comment successfully";
                 return Ok(response);
@@ -88,12 +88,13 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateComment(long id, [FromForm] CommentRequest comment)
+        [Authorize(Roles = "user")]
+        public async Task<IActionResult> UpdateComment(long id, CommentRequest comment)
         {
             var response = new GeneralResponse();
             try
@@ -103,7 +104,7 @@ namespace BaseProject.WebAPI.Controllers
                 {
                     response.Success = false;
                     response.Message = "Update fail";
-                    return BadRequest(response);
+                    return Conflict(response);
                 }
                 response.Message = "Update comment successfully";
                 response.Data = id;
@@ -113,11 +114,12 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "user,admin")]
         public async Task<IActionResult> DeleteComment(long id)
         {
             var response = new GeneralResponse();
@@ -128,7 +130,7 @@ namespace BaseProject.WebAPI.Controllers
                 {
                     response.Success = false;
                     response.Message = "Delete fail";
-                    return BadRequest(response);
+                    return Conflict(response);
                 }
                 response.Message = "Delete comment successfully";
                 response.Data = id;
@@ -138,7 +140,7 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
@@ -156,14 +158,14 @@ namespace BaseProject.WebAPI.Controllers
                     return NotFound(response);
                 }
                 response.Message = "Get comments successfully";
-                response.Data = comments.AsQueryable();
+                response.Data = comments.ToList();
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
@@ -181,14 +183,41 @@ namespace BaseProject.WebAPI.Controllers
                     return NotFound(response);
                 }
                 response.Message = "Get comments successfully";
-                response.Data = comments.AsQueryable();
+                response.Data = comments.ToList();
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
+            }
+        }
+
+        //get newest comments of user
+        [HttpGet("user/{userId}/newest")]
+        public async Task<IActionResult> GetNewestCommentsByUserId(string userId)
+        {
+            var response = new GeneralResponse();
+            try
+            {
+                var comments = await _commentService.GetNewestCommentsByUserId(userId);
+                if (comments == null)
+                {
+                    response.Success = false;
+                    response.Message = "No comments found";
+                    return NotFound(response);
+                }
+
+                response.Message = "Get comments successfully";
+                response.Data = comments;
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                return Conflict(response);
             }
         }
     }

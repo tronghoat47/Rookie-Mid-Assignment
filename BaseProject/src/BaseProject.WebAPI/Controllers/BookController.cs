@@ -3,7 +3,6 @@ using BaseProject.Application.Services;
 using BaseProject.Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
 
 namespace BaseProject.WebAPI.Controllers
 {
@@ -18,29 +17,32 @@ namespace BaseProject.WebAPI.Controllers
             _bookService = bookService;
         }
 
-        [HttpGet]
-        [EnableQuery]
-        public async Task<IActionResult> GetBooks()
+        [HttpPost("get-books")]
+        public async Task<IActionResult> GetBooks([FromForm] FormFilterBook formFilter)
         {
             var response = new GeneralResponse();
             try
             {
                 var books = await _bookService.GetBooks();
+                var totalBooks = books.Count();
                 if (books == null || !books.Any())
                 {
                     response.Success = false;
                     response.Message = "No books found";
                     return NotFound(response);
                 }
+
+                var booksFiltered = await _bookService.GetBooks(formFilter);
                 response.Message = "Get books successfully";
-                response.Data = books.AsQueryable();
+                response.Data = booksFiltered;
+                response.TotalCount = totalBooks;
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
@@ -65,11 +67,12 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateBook([FromForm] BookRequest book)
         {
             var response = new GeneralResponse();
@@ -80,7 +83,7 @@ namespace BaseProject.WebAPI.Controllers
                 {
                     response.Success = false;
                     response.Message = "Create fail";
-                    return BadRequest(response);
+                    return Conflict(response);
                 }
                 response.Message = "Create book successfully";
                 return Ok(response);
@@ -89,11 +92,12 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateBook(int id, [FromForm] BookRequest book)
         {
             var response = new GeneralResponse();
@@ -104,7 +108,7 @@ namespace BaseProject.WebAPI.Controllers
                 {
                     response.Success = false;
                     response.Message = "Update fail";
-                    return BadRequest(response);
+                    return Conflict(response);
                 }
                 response.Message = "Update book successfully";
                 response.Data = id;
@@ -114,7 +118,7 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
@@ -130,7 +134,7 @@ namespace BaseProject.WebAPI.Controllers
                 {
                     response.Success = false;
                     response.Message = "Delete fail";
-                    return BadRequest(response);
+                    return Conflict(response);
                 }
                 response.Message = "Delete book successfully";
                 response.Data = id;
@@ -140,7 +144,82 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
+            }
+        }
+
+        [HttpGet("top-news")]
+        public async Task<IActionResult> GetTop10NewsBook()
+        {
+            var response = new GeneralResponse();
+            try
+            {
+                var books = await _bookService.GetTop10NewsBook();
+                if (books == null || !books.Any())
+                {
+                    response.Success = false;
+                    response.Message = "No books found";
+                    return NotFound(response);
+                }
+                response.Message = "Get top 10 news book successfully";
+                response.Data = books.ToList();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                return Conflict(response);
+            }
+        }
+
+        [HttpGet("top-loved")]
+        public async Task<IActionResult> GetTop10LovedBook()
+        {
+            var response = new GeneralResponse();
+            try
+            {
+                var books = await _bookService.GetTop10LovedBook();
+                if (books == null || !books.Any())
+                {
+                    response.Success = false;
+                    response.Message = "No books found";
+                    return NotFound(response);
+                }
+                response.Message = "Get top 10 loved book successfully";
+                response.Data = books.ToList();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                return Conflict(response);
+            }
+        }
+
+        [HttpGet("not-borrowed/{borrowingId}")]
+        public async Task<IActionResult> GetNotBorrowedBooks(long borrowingId)
+        {
+            var response = new GeneralResponse();
+            try
+            {
+                var books = await _bookService.GetNotBorrowedBooks(borrowingId);
+                if (books == null || !books.Any())
+                {
+                    response.Success = false;
+                    response.Message = "No books found";
+                    return NotFound(response);
+                }
+                response.Message = "Get not borrowed books successfully";
+                response.Data = books.ToList();
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+                return Conflict(response);
             }
         }
     }

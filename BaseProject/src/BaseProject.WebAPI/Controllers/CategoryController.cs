@@ -1,14 +1,14 @@
 ﻿using BaseProject.Application.Models.Requests;
 using BaseProject.Application.Services;
 using BaseProject.Domain.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Query;
 
 namespace BaseProject.WebAPI.Controllers
 {
     [Route("api/categories")]
     [ApiController]
-    public class CategoryController : Controller
+    public class CategoryController : BaseApiController
     {
         private readonly ICategoryService _categoryService;
 
@@ -18,8 +18,9 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpGet]
-        [EnableQuery]
-        public async Task<IActionResult> GetCategories()
+        public async Task<IActionResult> GetCategories([FromQuery] string? name,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
         {
             var response = new GeneralResponse();
             try
@@ -31,15 +32,18 @@ namespace BaseProject.WebAPI.Controllers
                     response.Message = "No categories found";
                     return NotFound(response);
                 }
+                categories = categories.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+                if (!string.IsNullOrEmpty(name))
+                    categories = categories.Where(c => c.Name.Contains(name, StringComparison.OrdinalIgnoreCase));
                 response.Message = "Get categories successfully";
-                response.Data = categories.ToList().AsQueryable();
+                response.Data = categories.ToList();
                 return Ok(response);
             }
             catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
@@ -64,11 +68,12 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> CreateCategory(CategoryRequest categoryRequest)
         {
             var response = new GeneralResponse();
@@ -79,7 +84,7 @@ namespace BaseProject.WebAPI.Controllers
                 {
                     response.Success = false;
                     response.Message = "Create category failed";
-                    return BadRequest(response);
+                    return Conflict(response);
                 }
                 response.Message = "Create category successfully";
                 return Ok(response);
@@ -88,11 +93,12 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
         [HttpPut("{cateId}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> UpdateCategory(long cateId, CategoryRequest categoryRequest)
         {
             var response = new GeneralResponse();
@@ -103,7 +109,7 @@ namespace BaseProject.WebAPI.Controllers
                 {
                     response.Success = false;
                     response.Message = "Update category failed";
-                    return BadRequest(response);
+                    return Conflict(response);
                 }
                 response.Message = "Update category successfully";
                 return Ok(response);
@@ -112,11 +118,12 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
 
         [HttpDelete("{cateId}/{newCateId}")]
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> DeleteCategory(long cateId, long newCateId)
         {
             var response = new GeneralResponse();
@@ -127,7 +134,7 @@ namespace BaseProject.WebAPI.Controllers
                 {
                     response.Success = false;
                     response.Message = "Delete category failed";
-                    return BadRequest(response);
+                    return Conflict(response);
                 }
                 response.Message = "Delete category successfully";
                 return Ok(response);
@@ -136,7 +143,7 @@ namespace BaseProject.WebAPI.Controllers
             {
                 response.Success = false;
                 response.Message = ex.Message;
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
     }

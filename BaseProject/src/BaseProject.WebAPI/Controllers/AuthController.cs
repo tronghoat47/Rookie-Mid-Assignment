@@ -24,21 +24,21 @@ namespace BaseProject.WebAPI.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> RegisterAsync([FromBody] UserRequest request)
+        public async Task<IActionResult> RegisterAsync([FromBody] UserRegisterRequest request)
         {
             try
             {
                 var result = await _authService.RegisterAsync(request);
                 var response = new GeneralResponse
                 {
-                    Message = "User registered successfully",
+                    Message = "User registered successfully. Check email to active account",
                     Data = result
                 };
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Conflict(ex.Message);
             }
         }
 
@@ -47,22 +47,22 @@ namespace BaseProject.WebAPI.Controllers
         {
             try
             {
-                var (token, refreshToken, role) = await _authService.LoginAsync(request.Email, request.Password);
+                var (token, refreshToken, role, userId) = await _authService.LoginAsync(request.Email, request.Password);
                 var response = new GeneralResponse
                 {
                     Message = "User logged in successfully",
-                    Data = new { token, refreshToken, role }
+                    Data = new { token, refreshToken, role, userId }
                 };
                 return Ok(response);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Conflict(ex.Message);
             }
         }
 
-        [Authorize]
         [HttpGet("logout")]
+        [Authorize]
         public async Task<IActionResult> LogoutAsync()
         {
             try
@@ -79,54 +79,54 @@ namespace BaseProject.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Conflict(ex.Message);
             }
         }
 
-        [HttpGet("request-reset-password/{email}")]
-        public async Task<IActionResult> RequestResetPasswordAsync(string email)
-        {
-            try
-            {
-                var user = await _userService.GetUserByEmailAsync(email);
-                if (user == null)
-                {
-                    throw new KeyNotFoundException("User not found");
-                }
-                var isSuccess = await _emailService.SendEmailAsync(user.Email, EmailConstants.SUBJECT_RESET_PASSWORD, EmailConstants.BodyResetPasswordEmail(email));
-                if (!isSuccess)
-                {
-                    throw new InvalidOperationException("Failed to send email");
-                }
-                var response = new GeneralResponse
-                {
-                    Message = "Reset password email sent successfully"
-                };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpGet("request-reset-password/{email}")]
+        //public async Task<IActionResult> RequestResetPasswordAsync(string email)
+        //{
+        //    try
+        //    {
+        //        var user = await _userService.GetUserByEmailAsync(email);
+        //        if (user == null)
+        //        {
+        //            throw new KeyNotFoundException("User not found");
+        //        }
+        //        var isSuccess = await _emailService.SendEmailAsync(user.Email, EmailConstants.SUBJECT_RESET_PASSWORD, EmailConstants.BodyResetPasswordEmail(email));
+        //        if (!isSuccess)
+        //        {
+        //            throw new InvalidOperationException("Failed to send email");
+        //        }
+        //        var response = new GeneralResponse
+        //        {
+        //            Message = "Reset password email sent successfully"
+        //        };
+        //        return Ok(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Conflict(ex.Message);
+        //    }
+        //}
 
-        [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPasswordAsync([FromBody] UserResetPasswordRequest request)
-        {
-            try
-            {
-                await _authService.ResetPasswordAsync(request.Email, request.Password);
-                var response = new GeneralResponse
-                {
-                    Message = "Password reset successfully",
-                };
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpPost("reset-password")]
+        //public async Task<IActionResult> ResetPasswordAsync([FromBody] UserResetPasswordRequest request)
+        //{
+        //    try
+        //    {
+        //        await _authService.ResetPasswordAsync(request.Email, request.Password);
+        //        var response = new GeneralResponse
+        //        {
+        //            Message = "Password reset successfully",
+        //        };
+        //        return Ok(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Conflict(ex.Message);
+        //    }
+        //}
 
         [HttpGet("request-active-account/{email}")]
         public async Task<IActionResult> RequestActiveAccountAsync(string email)
@@ -151,7 +151,7 @@ namespace BaseProject.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Conflict(ex.Message);
             }
         }
 
@@ -172,7 +172,7 @@ namespace BaseProject.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Conflict(ex.Message);
             }
         }
 
@@ -181,11 +181,11 @@ namespace BaseProject.WebAPI.Controllers
         {
             try
             {
-                var (newToken, newRefreshToken, role) = await _authService.RefreshTokenAsync(refreshTokenRequest.RefreshToken);
+                var (newToken, newRefreshToken, role, userId) = await _authService.RefreshTokenAsync(refreshTokenRequest.RefreshToken);
                 var response = new GeneralResponse
                 {
                     Message = "Token refreshed successfully",
-                    Data = new { newToken, newRefreshToken, role }
+                    Data = new { newToken, newRefreshToken, role, userId }
                 };
                 return Ok(response);
             }
@@ -196,7 +196,7 @@ namespace BaseProject.WebAPI.Controllers
                     Success = false,
                     Message = ex.Message
                 };
-                return BadRequest(response);
+                return Conflict(response);
             }
         }
     }
